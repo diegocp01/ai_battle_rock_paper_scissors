@@ -1,75 +1,429 @@
-// DOM Elements
-const modalOverlay = document.getElementById('modal-overlay');
-const gameCountSelect = document.getElementById('game-count');
-const gptModelSelect = document.getElementById('gpt-model');
-const claudeModelSelect = document.getElementById('claude-model');
-const btnRun = document.getElementById('btn-run');
-const gameContainer = document.getElementById('game-container');
-const statsSection = document.getElementById('stats-section');
-const phaseIndicator = document.getElementById('phase-indicator');
+// ==========================================================
+// RPS Arena: GPT vs Claude
+// ==========================================================
 
-// Model name display elements
-const gptModelNameEl = document.getElementById('gpt-model-name');
-const claudeModelNameEl = document.getElementById('claude-model-name');
+const $ = (id) => document.getElementById(id);
 
-// Round display elements
-const roundNumberEl = document.getElementById('round-number');
-const totalRoundsEl = document.getElementById('total-rounds');
-const gameStatusEl = document.getElementById('game-status');
-const resultDisplayEl = document.getElementById('result-display');
+// Screens
+const setupEl = $('setup');
+const gameContainer = $('game-container');
+const btnRun = $('btn-run');
+const setupErrorEl = $('setup-error');
 
-// Choice display elements
-const gptChoiceIconEl = document.getElementById('gpt-choice-icon');
-const claudeChoiceIconEl = document.getElementById('claude-choice-icon');
+// Scoreboard
+const gptModelNameEl = $('gpt-model-name');
+const claudeModelNameEl = $('claude-model-name');
+const gptScoreEl = $('gpt-score');
+const claudeScoreEl = $('claude-score');
+const roundNumberEl = $('round-number');
+const totalRoundsEl = $('total-rounds');
+const roundPipsEl = $('round-pips');
+const phaseIndicator = $('phase-indicator');
+const momentumGptEl = $('momentum-gpt');
+const momentumClaudeEl = $('momentum-claude');
 
-// GPT elements
-const gptThinkingEl = document.getElementById('gpt-thinking');
-const gptWinsEl = document.getElementById('gpt-wins');
-const gptLossesEl = document.getElementById('gpt-losses');
-const gptDrawsEl = document.getElementById('gpt-draws');
-const gptReasoningEl = document.getElementById('gpt-reasoning');
-const gptTimerEl = document.getElementById('gpt-timer');
-const gptLastTimeEl = document.getElementById('gpt-last-time');
-const gptTotalTimeEl = document.getElementById('gpt-total-time');
+// Arena
+const arenaEl = $('arena');
+const calloutKickerEl = $('callout-kicker');
+const resultDisplayEl = $('result-display');
+const gameStatusEl = $('game-status');
+const actionsEl = $('actions');
+const btnRetry = $('btn-retry');
+const btnRematch = $('btn-rematch');
+const btnNew = $('btn-new');
+const confettiEl = $('confetti');
 
-// Claude elements
-const claudeThinkingEl = document.getElementById('claude-thinking');
-const claudeWinsEl = document.getElementById('claude-wins');
-const claudeLossesEl = document.getElementById('claude-losses');
-const claudeDrawsEl = document.getElementById('claude-draws');
-const claudeReasoningEl = document.getElementById('claude-reasoning');
-const claudeTimerEl = document.getElementById('claude-timer');
-const claudeLastTimeEl = document.getElementById('claude-last-time');
-const claudeTotalTimeEl = document.getElementById('claude-total-time');
+// Round log
+const statsBody = $('stats-body');
+const logEmptyEl = $('log-empty');
 
-// Stats table
-const statsBody = document.getElementById('stats-body');
+// Per-player elements
+function playerEls(key) {
+    return {
+        hand: $(`${key}-hand`),
+        glyph: $(`${key}-choice-icon`),
+        label: $(`${key}-choice-label`),
+        clock: $(`${key}-clock`),
+        clockLabel: $(`${key}-clock-label`),
+        timer: $(`${key}-timer`),
+        wins: $(`${key}-wins`),
+        losses: $(`${key}-losses`),
+        draws: $(`${key}-draws`),
+        reasoning: $(`${key}-reasoning`),
+        lastTime: $(`${key}-last-time`),
+        totalTime: $(`${key}-total-time`),
+    };
+}
 
-// Choice emoji mapping
-const CHOICE_EMOJIS = {
-    'rock': '🪨',
-    'paper': '📄',
-    'scissors': '✂️'
+const PLAYERS = {
+    gpt: { name: 'GPT', els: playerEls('gpt') },
+    claude: { name: 'Claude', els: playerEls('claude') },
 };
+
+const CHOICES = {
+    rock: { emoji: '🪨', label: 'Rock' },
+    paper: { emoji: '📄', label: 'Paper' },
+    scissors: { emoji: '✂️', label: 'Scissors' },
+};
+
+const VERBS = {
+    rock: 'crushes',
+    paper: 'covers',
+    scissors: 'cut',
+};
+
+const FIST = '✊';
+const STORAGE_KEY = 'rps-arena-settings';
+const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // Game state
 let isRunning = false;
 let timerInterval = null;
-let timerStartTime = null;
+let lastSettings = null;
+let lastScores = { gpt: 0, claude: 0 };
 
-// Initialize
-btnRun.addEventListener('click', startGames);
+// ---------- Setup ----------
+restoreSettings();
+btnRun.addEventListener('click', () => startGames(readSettings()));
+btnRetry.addEventListener('click', () => {
+    hideActions();
+    runGameLoop();
+});
+btnRematch.addEventListener('click', () => startGames(lastSettings));
+btnNew.addEventListener('click', showSetup);
+
+function checkedValue(name) {
+    const input = document.querySelector(`input[name="${name}"]:checked`);
+    return input ? input.value : null;
+}
+
+function readSettings() {
+    return {
+        num_games: parseInt(checkedValue('game-count'), 10) || 3,
+        gpt_model: checkedValue('gpt-model'),
+        claude_model: checkedValue('claude-model'),
+    };
+}
+
+function restoreSettings() {
+    let saved = null;
+    try {
+        saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    } catch (e) {
+        saved = null;
+    }
+    if (!saved) return;
+
+    const pairs = [
+        ['game-count', saved.num_games],
+        ['gpt-model', saved.gpt_model],
+        ['claude-model', saved.claude_model],
+    ];
+    for (const [name, value] of pairs) {
+        const input = document.querySelector(`input[name="${name}"][value="${value}"]`);
+        if (input) input.checked = true;
+    }
+}
+
+function saveSettings(settings) {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    } catch (e) {
+        // Storage unavailable; settings just won't be remembered.
+    }
+}
+
+function showSetup() {
+    if (isRunning) return;
+    gameContainer.hidden = true;
+    setupEl.hidden = false;
+    window.scrollTo({ top: 0, behavior: REDUCED_MOTION ? 'auto' : 'smooth' });
+}
+
+async function startGames(settings) {
+    if (isRunning || !settings) return;
+
+    btnRun.disabled = true;
+    btnRematch.disabled = true;
+    setupErrorEl.hidden = true;
+
+    try {
+        const data = await postJSON('/api/start-games', settings);
+        if (!data.success) throw new Error(data.error || 'Could not start the battle.');
+
+        lastSettings = settings;
+        saveSettings(settings);
+        lastScores = { gpt: 0, claude: 0 };
+
+        setupEl.hidden = true;
+        gameContainer.hidden = false;
+        window.scrollTo({ top: 0 });
+
+        resetArena();
+        clearReasoning();
+        updateUI(data.game_state);
+        runGameLoop();
+    } catch (error) {
+        console.error('Error starting games:', error);
+        if (!setupEl.hidden) {
+            setupErrorEl.textContent = `Couldn't start the battle: ${error.message}`;
+            setupErrorEl.hidden = false;
+        } else {
+            showError(error.message);
+        }
+    } finally {
+        btnRun.disabled = false;
+        btnRematch.disabled = false;
+    }
+}
+
+// ---------- Game loop ----------
+async function runGameLoop() {
+    if (isRunning) return;
+    isRunning = true;
+
+    try {
+        while (true) {
+            const state = await getJSON('/api/game-state');
+
+            if (state.all_rounds_complete) {
+                showFinal(state);
+                break;
+            }
+
+            // Fresh round
+            resetArena();
+            calloutKickerEl.textContent = `Round ${state.current_round} of ${state.total_rounds}`;
+            setCallout('Get ready');
+            gameStatusEl.textContent = 'Fists up.';
+            setPhase('Round ' + state.current_round, true);
+            await sleep(900);
+
+            // Both players choose simultaneously
+            setThinking(true);
+            setCallout('Thinking…');
+            gameStatusEl.textContent = 'Both models are deciding. No peeking.';
+            setPhase('Thinking', true);
+
+            const moveData = await postJSON('/api/next-move');
+            setThinking(false);
+
+            if (!moveData.success) {
+                throw new Error(moveData.error || 'The move request failed.');
+            }
+
+            await revealChoices(moveData.gpt_choice, moveData.claude_choice, moveData.round_winner);
+            updateUI(moveData.game_state);
+
+            if (moveData.game_state.all_rounds_complete) {
+                await sleep(1600);
+                continue; // loop picks up the final state
+            }
+
+            setPhase('Round over', false);
+            await sleep(2600);
+
+            const nextData = await postJSON('/api/next-game');
+            if (nextData.success) updateUI(nextData.game_state);
+        }
+    } catch (error) {
+        console.error('Game loop error:', error);
+        setThinking(false);
+        showError(error.message);
+    } finally {
+        isRunning = false;
+    }
+}
+
+async function revealChoices(gptChoice, claudeChoice, winner) {
+    setPhase('Shoot!', true);
+
+    // Rock, paper, scissors, shoot!
+    for (const word of ['Rock', 'Paper', 'Scissors']) {
+        setCallout(word + '…');
+        pump();
+        await sleep(400);
+    }
+
+    setCallout('Shoot!');
+    showChoice('gpt', gptChoice);
+    showChoice('claude', claudeChoice);
+    await sleep(450);
+
+    const gpt = CHOICES[gptChoice];
+    const claude = CHOICES[claudeChoice];
+
+    if (winner === 'gpt' || winner === 'claude') {
+        const loser = winner === 'gpt' ? 'claude' : 'gpt';
+        const winChoice = winner === 'gpt' ? gptChoice : claudeChoice;
+        const loseChoice = winner === 'gpt' ? claudeChoice : gptChoice;
+
+        PLAYERS[winner].els.hand.classList.add('is-winner');
+        PLAYERS[loser].els.hand.classList.add('is-loser');
+        setCallout(`${PLAYERS[winner].name} takes it`, `winner-${winner}`);
+        gameStatusEl.textContent = `${CHOICES[winChoice].label} ${VERBS[winChoice]} ${CHOICES[loseChoice].label.toLowerCase()}.`;
+    } else {
+        PLAYERS.gpt.els.hand.classList.add('is-draw');
+        PLAYERS.claude.els.hand.classList.add('is-draw');
+        setCallout('Draw', 'winner-draw');
+        gameStatusEl.textContent = `Both threw ${(gpt || claude).label.toLowerCase()}.`;
+    }
+}
+
+function showChoice(key, choice) {
+    const { hand, glyph, label } = PLAYERS[key].els;
+    const info = CHOICES[choice];
+    glyph.textContent = info ? info.emoji : '❔';
+    label.textContent = info ? info.label : choice;
+    hand.classList.remove('is-thinking', 'is-pumping');
+    void hand.offsetWidth; // restart animation
+    hand.classList.add('is-revealed');
+}
+
+function pump() {
+    for (const key of Object.keys(PLAYERS)) {
+        const { hand } = PLAYERS[key].els;
+        hand.classList.remove('is-thinking', 'is-pumping');
+        void hand.offsetWidth;
+        hand.classList.add('is-pumping');
+    }
+}
+
+function showFinal(state) {
+    const gptWins = state.gpt_stats.wins;
+    const claudeWins = state.claude_stats.wins;
+    const draws = state.gpt_stats.draws || 0;
+
+    let winner = 'draw';
+    if (gptWins > claudeWins) winner = 'gpt';
+    else if (claudeWins > gptWins) winner = 'claude';
+
+    arenaEl.classList.add('is-final');
+    calloutKickerEl.textContent = 'Final result';
+    setPhase('Final', false);
+
+    const title = winner === 'draw' ? 'Dead even' : `${PLAYERS[winner].name} wins the match`;
+    setCallout(title, `winner-${winner}`);
+    const score = document.createElement('span');
+    score.className = 'final-score';
+    score.textContent = `${gptWins} – ${claudeWins}` + (draws ? ` · ${draws} draw${draws === 1 ? '' : 's'}` : '');
+    resultDisplayEl.appendChild(score);
+
+    const gptName = state.gpt_display_name || 'GPT';
+    const claudeName = state.claude_display_name || 'Claude';
+    gameStatusEl.textContent = winner === 'draw'
+        ? `${gptName} and ${claudeName} couldn't be separated.`
+        : `${winner === 'gpt' ? gptName : claudeName} over ${winner === 'gpt' ? claudeName : gptName} after ${state.total_rounds} round${state.total_rounds === 1 ? '' : 's'}.`;
+
+    // Trophy hands
+    for (const key of Object.keys(PLAYERS)) {
+        const { hand, glyph, label } = PLAYERS[key].els;
+        hand.className = 'hand is-revealed';
+        if (winner === 'draw') {
+            glyph.textContent = '🤝';
+            hand.classList.add('is-draw');
+            label.textContent = 'Draw';
+        } else if (key === winner) {
+            glyph.textContent = '🏆';
+            hand.classList.add('is-winner');
+            label.textContent = 'Champion';
+        } else {
+            glyph.textContent = '🫡';
+            hand.classList.add('is-loser');
+            label.textContent = 'Runner-up';
+        }
+    }
+
+    btnRetry.hidden = true;
+    btnRematch.hidden = false;
+    actionsEl.hidden = false;
+
+    if (winner !== 'draw') burstConfetti(winner);
+}
+
+function showError(message) {
+    calloutKickerEl.textContent = 'Something went wrong';
+    setCallout('Round interrupted', 'is-error');
+    gameStatusEl.textContent = message || 'Check the server logs for details.';
+    setPhase('Paused', false);
+    for (const key of Object.keys(PLAYERS)) {
+        const { clockLabel, reasoning } = PLAYERS[key].els;
+        clockLabel.textContent = 'Stopped';
+        if (reasoning.classList.contains('is-thinking')) {
+            reasoning.textContent = 'No answer this round.';
+        }
+    }
+    btnRetry.hidden = false;
+    btnRematch.hidden = true;
+    actionsEl.hidden = false;
+}
+
+function hideActions() {
+    actionsEl.hidden = true;
+}
+
+// ---------- Arena helpers ----------
+function resetArena() {
+    hideActions();
+    arenaEl.classList.remove('is-final');
+    confettiEl.innerHTML = '';
+    for (const key of Object.keys(PLAYERS)) {
+        const { hand, glyph, label, clock, clockLabel, timer } = PLAYERS[key].els;
+        hand.className = 'hand';
+        glyph.textContent = FIST;
+        label.textContent = PLAYERS[key].name;
+        clock.classList.remove('is-ticking');
+        clockLabel.textContent = 'Ready';
+        timer.textContent = '0.0s';
+    }
+}
+
+function clearReasoning() {
+    for (const key of Object.keys(PLAYERS)) {
+        const el = PLAYERS[key].els.reasoning;
+        el.className = 'reasoning-text is-empty';
+        el.textContent = 'Waiting for the first move…';
+    }
+}
+
+function setCallout(text, modifier) {
+    resultDisplayEl.textContent = text;
+    resultDisplayEl.className = 'callout-main';
+    if (modifier) resultDisplayEl.classList.add(modifier);
+    void resultDisplayEl.offsetWidth;
+    resultDisplayEl.classList.add('pop');
+}
+
+function setPhase(text, live) {
+    phaseIndicator.textContent = text;
+    phaseIndicator.classList.toggle('is-live', Boolean(live));
+}
+
+function setThinking(on) {
+    for (const key of Object.keys(PLAYERS)) {
+        const { hand, clock, clockLabel, reasoning } = PLAYERS[key].els;
+        hand.classList.toggle('is-thinking', on);
+        clock.classList.toggle('is-ticking', on);
+        clockLabel.textContent = on ? 'Thinking' : 'Answered';
+        if (on) {
+            reasoning.className = 'reasoning-text is-thinking';
+            reasoning.textContent = 'Thinking…';
+        }
+    }
+    if (on) startTimer();
+    else stopTimer();
+}
 
 function startTimer() {
     stopTimer();
-    timerStartTime = Date.now();
-    gptTimerEl.textContent = '0.0s';
-    claudeTimerEl.textContent = '0.0s';
+    const start = performance.now();
+    PLAYERS.gpt.els.timer.textContent = '0.0s';
+    PLAYERS.claude.els.timer.textContent = '0.0s';
 
     timerInterval = setInterval(() => {
-        const elapsed = (Date.now() - timerStartTime) / 1000;
-        gptTimerEl.textContent = elapsed.toFixed(1) + 's';
-        claudeTimerEl.textContent = elapsed.toFixed(1) + 's';
+        const elapsed = ((performance.now() - start) / 1000).toFixed(1) + 's';
+        PLAYERS.gpt.els.timer.textContent = elapsed;
+        PLAYERS.claude.els.timer.textContent = elapsed;
     }, 100);
 }
 
@@ -80,247 +434,179 @@ function stopTimer() {
     }
 }
 
-async function startGames() {
-    const numRounds = parseInt(gameCountSelect.value);
-    const gptModel = gptModelSelect.value;
-    const claudeModel = claudeModelSelect.value;
+function burstConfetti(winner) {
+    if (REDUCED_MOTION) return;
+    const colors = winner === 'gpt'
+        ? ['#1fc98a', '#7ef0c3', '#f3f1ec']
+        : ['#e07a55', '#f5b99f', '#f3f1ec'];
 
-    try {
-        const response = await fetch('/api/start-games', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                num_games: numRounds,
-                gpt_model: gptModel,
-                claude_model: claudeModel
-            })
-        });
-
-        const data = await response.json();
-        if (data.success) {
-            modalOverlay.classList.add('hidden');
-            gameContainer.classList.remove('hidden');
-            statsSection.classList.remove('hidden');
-
-            resetChoiceDisplays();
-            updateUI(data.game_state);
-            runGameLoop();
-        }
-    } catch (error) {
-        console.error('Error starting games:', error);
-        alert('Failed to start games. Check console for details.');
+    confettiEl.innerHTML = '';
+    for (let i = 0; i < 70; i++) {
+        const piece = document.createElement('i');
+        piece.style.left = Math.random() * 100 + '%';
+        piece.style.background = colors[i % colors.length];
+        piece.style.animationDuration = 1.8 + Math.random() * 1.6 + 's';
+        piece.style.animationDelay = Math.random() * 0.6 + 's';
+        piece.style.setProperty('--dx', (Math.random() * 160 - 80).toFixed(0) + 'px');
+        piece.style.setProperty('--rot', (Math.random() * 900 - 450).toFixed(0) + 'deg');
+        confettiEl.appendChild(piece);
     }
 }
 
-function resetChoiceDisplays() {
-    gptChoiceIconEl.textContent = '❓';
-    claudeChoiceIconEl.textContent = '❓';
-    gptChoiceIconEl.className = 'choice-icon';
-    claudeChoiceIconEl.className = 'choice-icon';
-    resultDisplayEl.textContent = 'Get ready...';
-    resultDisplayEl.className = 'result-display';
-}
-
-async function runGameLoop() {
-    if (isRunning) return;
-    isRunning = true;
-
-    while (isRunning) {
-        // Get current state
-        const stateResponse = await fetch('/api/game-state');
-        const state = await stateResponse.json();
-
-        if (state.all_rounds_complete) {
-            // Show final results
-            const gptWins = state.gpt_stats.wins;
-            const claudeWins = state.claude_stats.wins;
-
-            if (gptWins > claudeWins) {
-                resultDisplayEl.textContent = '🏆 GPT Wins the Battle!';
-                resultDisplayEl.className = 'result-display winner-gpt';
-            } else if (claudeWins > gptWins) {
-                resultDisplayEl.textContent = '🏆 Claude Wins the Battle!';
-                resultDisplayEl.className = 'result-display winner-claude';
-            } else {
-                resultDisplayEl.textContent = '🤝 Battle Ends in a Tie!';
-                resultDisplayEl.className = 'result-display winner-draw';
-            }
-
-            gameStatusEl.textContent = '🏆 All rounds complete!';
-            phaseIndicator.textContent = 'Battle Complete';
-            isRunning = false;
-            break;
-        }
-
-        // Reset displays for new round
-        resetChoiceDisplays();
-        await sleep(1000);
-
-        // Show thinking indicators for both players
-        phaseIndicator.textContent = '🎮 Round ' + state.current_round;
-        gptThinkingEl.classList.remove('hidden');
-        claudeThinkingEl.classList.remove('hidden');
-        gameStatusEl.textContent = "Both AIs are thinking...";
-        resultDisplayEl.textContent = '🤔 Choosing...';
-        startTimer();
-
-        // Make the move (both players choose simultaneously)
-        try {
-            const moveResponse = await fetch('/api/next-move', { method: 'POST' });
-            const moveData = await moveResponse.json();
-
-            stopTimer();
-            gptThinkingEl.classList.add('hidden');
-            claudeThinkingEl.classList.add('hidden');
-
-            if (moveData.success) {
-                // Reveal animation
-                await revealChoices(moveData.gpt_choice, moveData.claude_choice, moveData.round_winner);
-
-                updateUI(moveData.game_state);
-
-                // Wait before next round
-                if (!moveData.game_state.all_rounds_complete) {
-                    await sleep(2500);
-
-                    // Move to next round
-                    const nextResponse = await fetch('/api/next-game', { method: 'POST' });
-                    const nextData = await nextResponse.json();
-
-                    if (nextData.success) {
-                        updateUI(nextData.game_state);
-                    }
-                }
-            } else {
-                console.error('Move error:', moveData.error);
-                gameStatusEl.textContent = 'Error: ' + moveData.error;
-                isRunning = false;
-                break;
-            }
-        } catch (error) {
-            console.error('API error:', error);
-            gameStatusEl.textContent = 'API Error - check console';
-            stopTimer();
-            gptThinkingEl.classList.add('hidden');
-            claudeThinkingEl.classList.add('hidden');
-            isRunning = false;
-            break;
-        }
-
-        await sleep(500);
-    }
-}
-
-async function revealChoices(gptChoice, claudeChoice, winner) {
-    // Countdown animation
-    const countdownOptions = ['3️⃣', '2️⃣', '1️⃣'];
-
-    for (const num of countdownOptions) {
-        gptChoiceIconEl.textContent = num;
-        claudeChoiceIconEl.textContent = num;
-        await sleep(400);
-    }
-
-    // Reveal!
-    gptChoiceIconEl.textContent = CHOICE_EMOJIS[gptChoice] || gptChoice;
-    claudeChoiceIconEl.textContent = CHOICE_EMOJIS[claudeChoice] || claudeChoice;
-
-    // Add reveal animation class
-    gptChoiceIconEl.classList.add('revealed');
-    claudeChoiceIconEl.classList.add('revealed');
-
-    // Show result
-    await sleep(300);
-
-    if (winner === 'gpt') {
-        resultDisplayEl.textContent = '🎉 GPT Wins!';
-        resultDisplayEl.className = 'result-display winner-gpt';
-        gptChoiceIconEl.classList.add('winner');
-        gameStatusEl.textContent = `🪨📄✂️ ${gptChoice.toUpperCase()} beats ${claudeChoice.toUpperCase()}!`;
-    } else if (winner === 'claude') {
-        resultDisplayEl.textContent = '🎉 Claude Wins!';
-        resultDisplayEl.className = 'result-display winner-claude';
-        claudeChoiceIconEl.classList.add('winner');
-        gameStatusEl.textContent = `🪨📄✂️ ${claudeChoice.toUpperCase()} beats ${gptChoice.toUpperCase()}!`;
-    } else {
-        resultDisplayEl.textContent = "🤝 It's a Draw!";
-        resultDisplayEl.className = 'result-display winner-draw';
-        gameStatusEl.textContent = `🪨📄✂️ Both chose ${gptChoice.toUpperCase()}!`;
-    }
-}
-
+// ---------- UI sync ----------
 function updateUI(state) {
-    // Update round number
     roundNumberEl.textContent = state.current_round;
     totalRoundsEl.textContent = state.total_rounds;
 
-    // Update stats
-    gptWinsEl.textContent = state.gpt_stats.wins;
-    gptLossesEl.textContent = state.gpt_stats.losses;
-    gptDrawsEl.textContent = state.gpt_stats.draws || 0;
-    claudeWinsEl.textContent = state.claude_stats.wins;
-    claudeLossesEl.textContent = state.claude_stats.losses;
-    claudeDrawsEl.textContent = state.claude_stats.draws || 0;
+    if (state.gpt_display_name) gptModelNameEl.textContent = state.gpt_display_name;
+    if (state.claude_display_name) claudeModelNameEl.textContent = state.claude_display_name;
 
-    // Update timing
-    gptLastTimeEl.textContent = state.gpt_last_time + 's';
-    gptTotalTimeEl.textContent = state.gpt_total_time + 's';
-    claudeLastTimeEl.textContent = state.claude_last_time + 's';
-    claudeTotalTimeEl.textContent = state.claude_total_time + 's';
+    // Scores
+    setScore('gpt', gptScoreEl, state.gpt_stats.wins);
+    setScore('claude', claudeScoreEl, state.claude_stats.wins);
+    updateMomentum(state.gpt_stats.wins, state.claude_stats.wins);
+    updatePips(state);
 
-    // Update reasoning
-    if (state.gpt_reasoning) {
-        gptReasoningEl.textContent = state.gpt_reasoning;
+    for (const key of Object.keys(PLAYERS)) {
+        const els = PLAYERS[key].els;
+        const stats = state[`${key}_stats`];
+        els.wins.textContent = stats.wins;
+        els.losses.textContent = stats.losses;
+        els.draws.textContent = stats.draws || 0;
+
+        const last = state[`${key}_last_time`];
+        els.lastTime.textContent = formatSeconds(last);
+        els.totalTime.textContent = formatSeconds(state[`${key}_total_time`]);
+        if (state.round_history.length && !els.clock.classList.contains('is-ticking')) {
+            els.timer.textContent = formatSeconds(last);
+        }
+
+        const reasoning = state[`${key}_reasoning`];
+        if (reasoning) renderReasoning(els.reasoning, reasoning);
     }
-    if (state.claude_reasoning) {
-        claudeReasoningEl.textContent = state.claude_reasoning;
-    }
 
-    // Update round history table
-    updateStatsTable(state.round_history);
+    updateRoundLog(state.round_history);
+}
 
-    // Update model display names
-    if (state.gpt_display_name) {
-        gptModelNameEl.textContent = state.gpt_display_name;
+function setScore(key, el, value) {
+    el.textContent = value;
+    if (value > lastScores[key]) {
+        el.classList.remove('bump');
+        void el.offsetWidth;
+        el.classList.add('bump');
     }
-    if (state.claude_display_name) {
-        claudeModelNameEl.textContent = state.claude_display_name;
+    lastScores[key] = value;
+}
+
+function updateMomentum(gptWins, claudeWins) {
+    const total = gptWins + claudeWins;
+    const gptShare = total === 0 ? 50 : (gptWins / total) * 100;
+    momentumGptEl.style.width = gptShare + '%';
+    momentumClaudeEl.style.width = 100 - gptShare + '%';
+}
+
+function updatePips(state) {
+    const history = state.round_history;
+    roundPipsEl.innerHTML = '';
+    for (let i = 1; i <= state.total_rounds; i++) {
+        const pip = document.createElement('span');
+        pip.className = 'pip';
+        const played = history.find((r) => r.round === i);
+        if (played) pip.classList.add(`win-${played.winner}`);
+        else if (i === state.current_round && !state.all_rounds_complete) pip.classList.add('is-current');
+        roundPipsEl.appendChild(pip);
     }
 }
 
-function updateStatsTable(history) {
+// Light formatting: escape everything, then allow **bold** headings.
+function renderReasoning(el, text) {
+    const escaped = text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    el.innerHTML = escaped.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    el.className = 'reasoning-text';
+    void el.offsetWidth;
+    el.classList.add('is-fresh');
+    el.scrollTop = 0;
+}
+
+function updateRoundLog(history) {
+    logEmptyEl.hidden = history.length > 0;
+    if (statsBody.children.length === history.length) return;
+
     statsBody.innerHTML = '';
+    // Newest round first
+    [...history].reverse().forEach((round) => {
+        const row = document.createElement('li');
+        row.className = 'log-row';
 
-    history.forEach(round => {
-        const row = document.createElement('tr');
+        const num = el('span', 'log-num', 'R' + round.round);
+        const gpt = logPick('gpt', round.gpt_choice, round.gpt_time, round.winner === 'gpt');
+        const result = el(
+            'span',
+            `log-result winner-${round.winner}`,
+            round.winner === 'draw' ? 'Draw' : PLAYERS[round.winner].name + ' wins'
+        );
+        const claude = logPick('claude', round.claude_choice, round.claude_time, round.winner === 'claude');
+        const clock = el('span', 'log-clock', round.time);
 
-        let winnerClass = 'winner-draw';
-        let winnerText = 'Draw';
-        if (round.winner === 'gpt') {
-            winnerClass = 'winner-gpt';
-            winnerText = 'GPT';
-        } else if (round.winner === 'claude') {
-            winnerClass = 'winner-claude';
-            winnerText = 'Claude';
-        }
-
-        const gptEmoji = CHOICE_EMOJIS[round.gpt_choice] || round.gpt_choice;
-        const claudeEmoji = CHOICE_EMOJIS[round.claude_choice] || round.claude_choice;
-
-        row.innerHTML = `
-            <td>${round.round}</td>
-            <td>${round.time}</td>
-            <td class="choice-cell">${gptEmoji} ${round.gpt_choice}</td>
-            <td class="choice-cell">${claudeEmoji} ${round.claude_choice}</td>
-            <td class="${winnerClass}">${winnerText}</td>
-            <td>${round.gpt_time || 0}s</td>
-            <td>${round.claude_time || 0}s</td>
-        `;
-
+        row.append(num, gpt, result, claude, clock);
         statsBody.appendChild(row);
     });
 }
 
+function logPick(key, choice, seconds, isWinner) {
+    const wrap = el('span', `log-pick ${key}${key === 'claude' ? ' right' : ''}${isWinner ? ' is-winner' : ''}`);
+    const info = CHOICES[choice];
+    wrap.appendChild(el('span', 'log-emoji', info ? info.emoji : '❔'));
+    const text = el('span', 'log-pick-text');
+    text.appendChild(el('span', 'log-choice', info ? info.label : choice));
+    text.appendChild(el('span', 'log-time', formatSeconds(seconds)));
+    wrap.appendChild(text);
+    return wrap;
+}
+
+// ---------- Utilities ----------
+function el(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+}
+
+function formatSeconds(value) {
+    const n = Number(value) || 0;
+    return n.toFixed(n >= 10 ? 1 : 2) + 's';
+}
+
+async function getJSON(url) {
+    const response = await fetch(url);
+    return parseResponse(response);
+}
+
+async function postJSON(url, body) {
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: body ? JSON.stringify(body) : undefined,
+    });
+    return parseResponse(response);
+}
+
+async function parseResponse(response) {
+    let data;
+    try {
+        data = await response.json();
+    } catch (e) {
+        throw new Error(`Server returned ${response.status} ${response.statusText}`);
+    }
+    if (!response.ok && !data.error) {
+        data.error = `Server returned ${response.status}`;
+    }
+    return data;
+}
+
 function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
 }
