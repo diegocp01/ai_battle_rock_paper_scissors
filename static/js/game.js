@@ -31,7 +31,6 @@ const actionsEl = $('actions');
 const btnRetry = $('btn-retry');
 const btnRematch = $('btn-rematch');
 const btnNew = $('btn-new');
-const confettiEl = $('confetti');
 
 // Round log
 const statsBody = $('stats-body');
@@ -194,15 +193,15 @@ async function runGameLoop() {
             // Fresh round
             resetArena();
             calloutKickerEl.textContent = `Round ${state.current_round} of ${state.total_rounds}`;
-            setCallout('Get ready');
-            gameStatusEl.textContent = 'Fists up.';
+            setCallout('Get ready.');
+            gameStatusEl.textContent = 'Both models are stepping in.';
             setPhase('Round ' + state.current_round, true);
             await sleep(900);
 
             // Both players choose simultaneously
             setThinking(true);
             setCallout('Thinking…');
-            gameStatusEl.textContent = 'Both models are deciding. No peeking.';
+            gameStatusEl.textContent = 'Each model is deciding on its own.';
             setPhase('Thinking', true);
 
             const moveData = await postJSON('/api/next-move');
@@ -260,12 +259,12 @@ async function revealChoices(gptChoice, claudeChoice, winner) {
 
         PLAYERS[winner].els.hand.classList.add('is-winner');
         PLAYERS[loser].els.hand.classList.add('is-loser');
-        setCallout(`${PLAYERS[winner].name} takes it`, `winner-${winner}`);
+        setCallout(`${PLAYERS[winner].name} wins.`, `winner-${winner}`);
         gameStatusEl.textContent = `${CHOICES[winChoice].label} ${VERBS[winChoice]} ${CHOICES[loseChoice].label.toLowerCase()}.`;
     } else {
         PLAYERS.gpt.els.hand.classList.add('is-draw');
         PLAYERS.claude.els.hand.classList.add('is-draw');
-        setCallout('Draw', 'winner-draw');
+        setCallout('Draw.', 'winner-draw');
         gameStatusEl.textContent = `Both threw ${(gpt || claude).label.toLowerCase()}.`;
     }
 }
@@ -302,7 +301,7 @@ function showFinal(state) {
     calloutKickerEl.textContent = 'Final result';
     setPhase('Final', false);
 
-    const title = winner === 'draw' ? 'Dead even' : `${PLAYERS[winner].name} wins the match`;
+    const title = winner === 'draw' ? 'A perfect tie.' : `${PLAYERS[winner].name} takes the match.`;
     setCallout(title, `winner-${winner}`);
     const score = document.createElement('span');
     score.className = 'final-score';
@@ -326,7 +325,7 @@ function showFinal(state) {
         } else if (key === winner) {
             glyph.textContent = '🏆';
             hand.classList.add('is-winner');
-            label.textContent = 'Champion';
+            label.textContent = 'Winner';
         } else {
             glyph.textContent = '🫡';
             hand.classList.add('is-loser');
@@ -338,12 +337,11 @@ function showFinal(state) {
     btnRematch.hidden = false;
     actionsEl.hidden = false;
 
-    if (winner !== 'draw') burstConfetti(winner);
 }
 
 function showError(message) {
     calloutKickerEl.textContent = 'Something went wrong';
-    setCallout('Round interrupted', 'is-error');
+    setCallout('Round interrupted.', 'is-error');
     gameStatusEl.textContent = message || 'Check the server logs for details.';
     setPhase('Paused', false);
     for (const key of Object.keys(PLAYERS)) {
@@ -366,7 +364,6 @@ function hideActions() {
 function resetArena() {
     hideActions();
     arenaEl.classList.remove('is-final');
-    confettiEl.innerHTML = '';
     for (const key of Object.keys(PLAYERS)) {
         const { hand, glyph, label, clock, clockLabel, timer } = PLAYERS[key].els;
         hand.className = 'hand';
@@ -382,7 +379,7 @@ function clearReasoning() {
     for (const key of Object.keys(PLAYERS)) {
         const el = PLAYERS[key].els.reasoning;
         el.className = 'reasoning-text is-empty';
-        el.textContent = 'Waiting for the first move…';
+        el.textContent = 'Waiting for the first move.';
     }
 }
 
@@ -434,24 +431,6 @@ function stopTimer() {
     }
 }
 
-function burstConfetti(winner) {
-    if (REDUCED_MOTION) return;
-    const colors = winner === 'gpt'
-        ? ['#1fc98a', '#7ef0c3', '#f3f1ec']
-        : ['#e07a55', '#f5b99f', '#f3f1ec'];
-
-    confettiEl.innerHTML = '';
-    for (let i = 0; i < 70; i++) {
-        const piece = document.createElement('i');
-        piece.style.left = Math.random() * 100 + '%';
-        piece.style.background = colors[i % colors.length];
-        piece.style.animationDuration = 1.8 + Math.random() * 1.6 + 's';
-        piece.style.animationDelay = Math.random() * 0.6 + 's';
-        piece.style.setProperty('--dx', (Math.random() * 160 - 80).toFixed(0) + 'px');
-        piece.style.setProperty('--rot', (Math.random() * 900 - 450).toFixed(0) + 'deg');
-        confettiEl.appendChild(piece);
-    }
-}
 
 // ---------- UI sync ----------
 function updateUI(state) {

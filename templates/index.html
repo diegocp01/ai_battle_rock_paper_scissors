@@ -4,145 +4,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="color-scheme" content="dark">
-    <title>RPS Arena: GPT vs Claude</title>
+    <meta name="color-scheme" content="light dark">
+    <title>RPS Arena: GPT vs. Claude</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&family=Unbounded:wght@500;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 
 <body>
-    <!-- Stage lighting -->
-    <div class="stage" aria-hidden="true">
-        <div class="spot spot-gpt"></div>
-        <div class="spot spot-claude"></div>
-        <div class="floor"></div>
-    </div>
-
-    <header class="topbar">
-        <a class="brand" href="/" aria-label="RPS Arena home">
-            <span class="brand-mark">✊✋✌️</span>
-            <span class="brand-name">RPS<span>Arena</span></span>
-        </a>
-        <span class="brand-tag">AI vs AI · Live</span>
-    </header>
+    <nav class="nav">
+        <div class="nav-inner">
+            <a class="brand" href="/">RPS Arena</a>
+            <span class="nav-meta">GPT vs. Claude</span>
+        </div>
+    </nav>
 
     <main>
-        <!-- ========== Setup: fighter select ========== -->
+        <!-- ========== Setup ========== -->
         <section id="setup" class="setup" aria-labelledby="setup-title">
-            <div class="setup-hero">
-                <p class="eyebrow">Tonight's main event</p>
-                <h1 id="setup-title" class="setup-title">
-                    <span class="t-gpt">GPT</span>
-                    <span class="t-vs">vs</span>
-                    <span class="t-claude">Claude</span>
-                </h1>
-                <p class="setup-lede">Two frontier models. One hand each. No peeking.</p>
-            </div>
+            <header class="hero">
+                <p class="eyebrow">AI vs. AI</p>
+                <h1 id="setup-title" class="hero-title">Rock. Paper. Scissors.</h1>
+                <p class="hero-sub">Two frontier models. One throw each. No&nbsp;peeking.</p>
+                <div class="hero-art" aria-hidden="true">
+                    <span>🪨</span><span>📄</span><span>✂️</span>
+                </div>
+            </header>
 
-            <div class="fighters">
-                <fieldset class="fighter fighter-gpt">
-                    <legend class="fighter-head">
+            <div class="config">
+                <fieldset class="config-group fighter-gpt">
+                    <legend class="config-head">
                         <img src="/static/img/openai.webp" alt="" class="avatar">
-                        <span>
-                            <span class="fighter-corner">Player 1 · OpenAI</span>
-                            <span class="fighter-title">Pick a GPT</span>
-                        </span>
+                        <span class="config-title"><b>GPT.</b> Choose your challenger.</span>
                     </legend>
-                    <div class="options">
-                        <label class="option">
+                    <div class="tiles">
+                        <label class="tile">
                             <input type="radio" name="gpt-model" value="gpt-5-mini">
-                            <span class="option-body">
-                                <span class="option-name">GPT-5 Mini</span>
-                                <span class="option-tag">Minimal reasoning</span>
+                            <span class="tile-body">
+                                <span class="tile-name">GPT-5 Mini</span>
+                                <span class="tile-tag">Minimal reasoning</span>
                             </span>
                         </label>
-                        <label class="option">
+                        <label class="tile">
                             <input type="radio" name="gpt-model" value="gpt-5.1-low">
-                            <span class="option-body">
-                                <span class="option-name">GPT-5.1</span>
-                                <span class="option-tag">Low effort</span>
+                            <span class="tile-body">
+                                <span class="tile-name">GPT-5.1</span>
+                                <span class="tile-tag">Low effort</span>
                             </span>
                         </label>
-                        <label class="option">
+                        <label class="tile">
                             <input type="radio" name="gpt-model" value="gpt-5.1" checked>
-                            <span class="option-body">
-                                <span class="option-name">GPT-5.1</span>
-                                <span class="option-tag">Medium effort</span>
+                            <span class="tile-body">
+                                <span class="tile-name">GPT-5.1</span>
+                                <span class="tile-tag">Medium effort</span>
                             </span>
                         </label>
-                        <label class="option">
+                        <label class="tile">
                             <input type="radio" name="gpt-model" value="gpt-5.2">
-                            <span class="option-body">
-                                <span class="option-name">GPT-5.2</span>
-                                <span class="option-tag">Medium effort</span>
+                            <span class="tile-body">
+                                <span class="tile-name">GPT-5.2</span>
+                                <span class="tile-tag">Medium effort</span>
                             </span>
                         </label>
-                        <label class="option">
+                        <label class="tile">
                             <input type="radio" name="gpt-model" value="gpt-5.2-high">
-                            <span class="option-body">
-                                <span class="option-name">GPT-5.2</span>
-                                <span class="option-tag">High effort</span>
+                            <span class="tile-body">
+                                <span class="tile-name">GPT-5.2</span>
+                                <span class="tile-tag">High effort</span>
                             </span>
                         </label>
                     </div>
                 </fieldset>
 
-                <div class="vs-badge" aria-hidden="true">VS</div>
-
-                <fieldset class="fighter fighter-claude">
-                    <legend class="fighter-head">
+                <fieldset class="config-group fighter-claude">
+                    <legend class="config-head">
                         <img src="/static/img/anthropic.jpeg" alt="" class="avatar">
-                        <span>
-                            <span class="fighter-corner">Player 2 · Anthropic</span>
-                            <span class="fighter-title">Pick a Claude</span>
-                        </span>
+                        <span class="config-title"><b>Claude.</b> Choose its opponent.</span>
                     </legend>
-                    <div class="options">
-                        <label class="option">
+                    <div class="tiles">
+                        <label class="tile">
                             <input type="radio" name="claude-model" value="claude-haiku-4.5-standard">
-                            <span class="option-body">
-                                <span class="option-name">Haiku 4.5</span>
-                                <span class="option-tag">Standard</span>
+                            <span class="tile-body">
+                                <span class="tile-name">Haiku 4.5</span>
+                                <span class="tile-tag">Standard</span>
                             </span>
                         </label>
-                        <label class="option">
+                        <label class="tile">
                             <input type="radio" name="claude-model" value="claude-haiku-4.5" checked>
-                            <span class="option-body">
-                                <span class="option-name">Haiku 4.5</span>
-                                <span class="option-tag">Extended thinking</span>
+                            <span class="tile-body">
+                                <span class="tile-name">Haiku 4.5</span>
+                                <span class="tile-tag">Extended thinking</span>
                             </span>
                         </label>
-                        <label class="option">
+                        <label class="tile">
                             <input type="radio" name="claude-model" value="claude-sonnet-4.5-standard">
-                            <span class="option-body">
-                                <span class="option-name">Sonnet 4.5</span>
-                                <span class="option-tag">Standard</span>
+                            <span class="tile-body">
+                                <span class="tile-name">Sonnet 4.5</span>
+                                <span class="tile-tag">Standard</span>
                             </span>
                         </label>
-                        <label class="option">
+                        <label class="tile">
                             <input type="radio" name="claude-model" value="claude-sonnet-4.5">
-                            <span class="option-body">
-                                <span class="option-name">Sonnet 4.5</span>
-                                <span class="option-tag">Extended thinking</span>
+                            <span class="tile-body">
+                                <span class="tile-name">Sonnet 4.5</span>
+                                <span class="tile-tag">Extended thinking</span>
                             </span>
                         </label>
-                        <label class="option">
+                        <label class="tile">
                             <input type="radio" name="claude-model" value="claude-opus-4.5">
-                            <span class="option-body">
-                                <span class="option-name">Opus 4.5</span>
-                                <span class="option-tag">Extended thinking</span>
+                            <span class="tile-body">
+                                <span class="tile-name">Opus 4.5</span>
+                                <span class="tile-tag">Extended thinking</span>
                             </span>
                         </label>
                     </div>
                 </fieldset>
-            </div>
 
-            <div class="setup-footer">
-                <fieldset class="rounds">
-                    <legend>Rounds</legend>
-                    <div class="segmented">
+                <fieldset class="config-group rounds">
+                    <legend class="config-head">
+                        <span class="config-title"><b>Rounds.</b> How long should it last?</span>
+                    </legend>
+                    <div class="segmented" role="presentation">
                         <label><input type="radio" name="game-count" value="1"><span>1</span></label>
                         <label><input type="radio" name="game-count" value="3" checked><span>3</span></label>
                         <label><input type="radio" name="game-count" value="5"><span>5</span></label>
@@ -150,18 +133,19 @@
                         <label><input type="radio" name="game-count" value="10"><span>10</span></label>
                     </div>
                 </fieldset>
-                <button id="btn-run" class="btn btn-fight" type="button">
-                    <span>Start the battle</span>
-                    <span class="btn-fight-icon" aria-hidden="true">→</span>
-                </button>
             </div>
-            <p id="setup-error" class="setup-error" role="alert" hidden></p>
+
+            <div class="cta">
+                <button id="btn-run" class="btn btn-primary btn-large" type="button">Start Battle</button>
+                <p class="cta-note">Each round calls both models. Longer matches take a little longer.</p>
+                <p id="setup-error" class="setup-error" role="alert" hidden></p>
+            </div>
         </section>
 
         <!-- ========== Battle ========== -->
         <section id="game-container" class="battle" hidden aria-label="Battle">
-            <!-- Broadcast scoreboard -->
-            <div class="scoreboard">
+            <!-- Scoreboard -->
+            <div class="card scoreboard">
                 <div class="sb-side sb-gpt">
                     <img src="/static/img/openai.webp" alt="OpenAI" class="avatar">
                     <div class="sb-id">
@@ -172,7 +156,7 @@
                 </div>
 
                 <div class="sb-center">
-                    <span class="sb-round">Round <b id="round-number">1</b><span class="sb-of">/</span><span id="total-rounds">3</span></span>
+                    <span class="sb-round">Round <span id="round-number">1</span> of <span id="total-rounds">3</span></span>
                     <div id="round-pips" class="pips" aria-hidden="true"></div>
                     <span id="phase-indicator" class="phase">Ready</span>
                 </div>
@@ -185,34 +169,35 @@
                     </div>
                     <img src="/static/img/anthropic.jpeg" alt="Anthropic" class="avatar">
                 </div>
-            </div>
-            <div class="momentum" aria-hidden="true">
-                <span id="momentum-gpt" class="momentum-gpt"></span>
-                <span id="momentum-claude" class="momentum-claude"></span>
+
+                <div class="momentum" aria-hidden="true">
+                    <span id="momentum-gpt" class="momentum-gpt"></span>
+                    <span id="momentum-claude" class="momentum-claude"></span>
+                </div>
             </div>
 
             <!-- Arena -->
-            <div id="arena" class="arena">
+            <div id="arena" class="card arena">
                 <div class="corner corner-gpt">
                     <div id="gpt-hand" class="hand">
                         <span id="gpt-choice-icon" class="hand-glyph">✊</span>
                     </div>
                     <span id="gpt-choice-label" class="hand-label">GPT</span>
                     <span id="gpt-clock" class="clock">
-                        <span class="clock-dot"></span>
-                        <span id="gpt-clock-label" class="clock-label">Waiting</span>
+                        <span class="spinner" aria-hidden="true"></span>
+                        <span id="gpt-clock-label" class="clock-label">Ready</span>
                         <span id="gpt-timer" class="clock-time">0.0s</span>
                     </span>
                 </div>
 
                 <div class="callout">
                     <span id="callout-kicker" class="callout-kicker">Round 1</span>
-                    <div id="result-display" class="callout-main" aria-live="polite">Get ready</div>
-                    <p id="game-status" class="callout-sub">Both fighters are stepping in.</p>
+                    <div id="result-display" class="callout-main" aria-live="polite">Get ready.</div>
+                    <p id="game-status" class="callout-sub">Both models are stepping in.</p>
                     <div id="actions" class="actions" hidden>
-                        <button id="btn-retry" class="btn btn-primary" type="button" hidden>Retry round</button>
+                        <button id="btn-retry" class="btn btn-primary" type="button" hidden>Retry Round</button>
                         <button id="btn-rematch" class="btn btn-primary" type="button" hidden>Rematch</button>
-                        <button id="btn-new" class="btn btn-ghost" type="button">New matchup</button>
+                        <button id="btn-new" class="btn btn-link" type="button">New matchup</button>
                     </div>
                 </div>
 
@@ -222,42 +207,41 @@
                     </div>
                     <span id="claude-choice-label" class="hand-label">Claude</span>
                     <span id="claude-clock" class="clock">
-                        <span class="clock-dot"></span>
-                        <span id="claude-clock-label" class="clock-label">Waiting</span>
+                        <span class="spinner" aria-hidden="true"></span>
+                        <span id="claude-clock-label" class="clock-label">Ready</span>
                         <span id="claude-timer" class="clock-time">0.0s</span>
                     </span>
                 </div>
-                <div id="confetti" class="confetti" aria-hidden="true"></div>
             </div>
 
-            <!-- What each model was thinking -->
+            <!-- Reasoning -->
             <div class="minds">
-                <article class="mind mind-gpt">
+                <article class="card mind mind-gpt">
                     <header class="mind-head">
                         <h2>GPT's reasoning</h2>
                         <dl class="record">
-                            <div><dt>W</dt><dd id="gpt-wins">0</dd></div>
-                            <div><dt>L</dt><dd id="gpt-losses">0</dd></div>
-                            <div><dt>D</dt><dd id="gpt-draws">0</dd></div>
+                            <div><dt>Wins</dt><dd id="gpt-wins">0</dd></div>
+                            <div><dt>Losses</dt><dd id="gpt-losses">0</dd></div>
+                            <div><dt>Draws</dt><dd id="gpt-draws">0</dd></div>
                         </dl>
                     </header>
-                    <div id="gpt-reasoning" class="reasoning-text is-empty">Waiting for the first move…</div>
+                    <div id="gpt-reasoning" class="reasoning-text is-empty">Waiting for the first move.</div>
                     <footer class="mind-foot">
                         <span>Last round <b id="gpt-last-time">0.0s</b></span>
                         <span>Total <b id="gpt-total-time">0.0s</b></span>
                     </footer>
                 </article>
 
-                <article class="mind mind-claude">
+                <article class="card mind mind-claude">
                     <header class="mind-head">
                         <h2>Claude's reasoning</h2>
                         <dl class="record">
-                            <div><dt>W</dt><dd id="claude-wins">0</dd></div>
-                            <div><dt>L</dt><dd id="claude-losses">0</dd></div>
-                            <div><dt>D</dt><dd id="claude-draws">0</dd></div>
+                            <div><dt>Wins</dt><dd id="claude-wins">0</dd></div>
+                            <div><dt>Losses</dt><dd id="claude-losses">0</dd></div>
+                            <div><dt>Draws</dt><dd id="claude-draws">0</dd></div>
                         </dl>
                     </header>
-                    <div id="claude-reasoning" class="reasoning-text is-empty">Waiting for the first move…</div>
+                    <div id="claude-reasoning" class="reasoning-text is-empty">Waiting for the first move.</div>
                     <footer class="mind-foot">
                         <span>Last round <b id="claude-last-time">0.0s</b></span>
                         <span>Total <b id="claude-total-time">0.0s</b></span>
@@ -273,6 +257,10 @@
             </section>
         </section>
     </main>
+
+    <footer class="site-footer">
+        <p>Choices are made independently. Neither model sees the other's throw.</p>
+    </footer>
 
     <script src="/static/js/game.js"></script>
 </body>

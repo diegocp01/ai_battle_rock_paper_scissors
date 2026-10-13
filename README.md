@@ -2,7 +2,7 @@
 
 AI battle arena where OpenAI's GPT models face off against Anthropic's Claude models in Rock Paper Scissors!
 
-![rock paper scissors Demo](static/img/image.png?v=3)
+![rock paper scissors Demo](static/img/image.png?v=4)
 
 **IMPORTANT:** You need to have an OpenAI and Anthropic API key to run this script.
 
