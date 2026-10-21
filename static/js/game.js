@@ -72,6 +72,16 @@ const VERBS = {
 };
 
 const FIST = '✊';
+const EFFORT_LABELS = {
+    none: 'None',
+    minimal: 'Minimal',
+    low: 'Low',
+    medium: 'Medium',
+    high: 'High',
+    xhigh: 'X-High',
+    max: 'Max',
+    ultra: 'Ultra',
+};
 const STORAGE_KEY = 'rps-arena-settings';
 const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -82,7 +92,11 @@ let lastSettings = null;
 let lastScores = { gpt: 0, claude: 0 };
 
 // ---------- Setup ----------
-restoreSettings();
+const savedSettings = loadSavedSettings();
+const catalog = { gpt: null, claude: null };
+
+restoreRounds();
+loadModels();
 btnRun.addEventListener('click', () => startGames(readSettings()));
 btnRetry.addEventListener('click', () => {
     hideActions();
@@ -100,28 +114,108 @@ function readSettings() {
     return {
         num_games: parseInt(checkedValue('game-count'), 10) || 3,
         gpt_model: checkedValue('gpt-model'),
+        gpt_effort: checkedValue('gpt-effort'),
         claude_model: checkedValue('claude-model'),
+        claude_effort: checkedValue('claude-effort'),
     };
 }
 
-function restoreSettings() {
-    let saved = null;
+function loadSavedSettings() {
     try {
-        saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
     } catch (e) {
-        saved = null;
+        return {};
     }
-    if (!saved) return;
+}
 
-    const pairs = [
-        ['game-count', saved.num_games],
-        ['gpt-model', saved.gpt_model],
-        ['claude-model', saved.claude_model],
-    ];
-    for (const [name, value] of pairs) {
-        const input = document.querySelector(`input[name="${name}"][value="${value}"]`);
-        if (input) input.checked = true;
+function restoreRounds() {
+    const input = document.querySelector(`input[name="game-count"][value="${savedSettings.num_games}"]`);
+    if (input) input.checked = true;
+}
+
+// Model lists come from the server: Codex reports its own models, and the
+// Claude Code CLI accepts aliases for each model family.
+async function loadModels() {
+    btnRun.disabled = true;
+    try {
+        const data = await getJSON('/api/models');
+        renderModelOptions('gpt', data.gpt);
+        renderModelOptions('claude', data.claude);
+    } catch (error) {
+        console.error('Error loading models:', error);
+        setupErrorEl.textContent = `Couldn't load the model lists: ${error.message}`;
+        setupErrorEl.hidden = false;
+    } finally {
+        btnRun.disabled = false;
     }
+}
+
+function renderModelOptions(key, info) {
+    catalog[key] = info;
+    const tiles = $(`${key}-tiles`);
+    const note = $(`${key}-note`);
+    tiles.innerHTML = '';
+    tiles.removeAttribute('aria-busy');
+
+    note.hidden = !info.message;
+    if (info.message) note.innerHTML = formatNote(info.message);
+
+    if (!info.models.length) {
+        tiles.appendChild(el('p', 'tiles-empty', 'No models available.'));
+        renderEfforts(key);
+        return;
+    }
+
+    const ids = info.models.map((m) => m.id);
+    const selected = pickValue(savedSettings[`${key}_model`], ids, info.default_model || ids[0]);
+
+    for (const model of info.models) {
+        const label = el('label', 'tile');
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.name = `${key}-model`;
+        input.value = model.id;
+        input.checked = model.id === selected;
+        input.addEventListener('change', () => renderEfforts(key));
+
+        const body = el('span', 'tile-body');
+        body.append(el('span', 'tile-name', model.name), el('span', 'tile-tag', model.tag || ''));
+        label.append(input, body);
+        tiles.appendChild(label);
+    }
+
+    renderEfforts(key, savedSettings[`${key}_effort`]);
+}
+
+function renderEfforts(key, preferred) {
+    const container = $(`${key}-effort`);
+    const current = preferred || checkedValue(`${key}-effort`);
+    const model = (catalog[key]?.models || []).find((m) => m.id === checkedValue(`${key}-model`));
+    container.innerHTML = '';
+    container.parentElement.hidden = !model;
+    if (!model) return;
+
+    const effort = pickValue(current, model.efforts, model.default_effort);
+    for (const value of model.efforts) {
+        const label = document.createElement('label');
+        const input = document.createElement('input');
+        input.type = 'radio';
+        input.name = `${key}-effort`;
+        input.value = value;
+        input.checked = value === effort;
+        label.append(input, el('span', null, EFFORT_LABELS[value] || value));
+        container.appendChild(label);
+    }
+}
+
+function pickValue(value, allowed, fallback) {
+    return allowed.includes(value) ? value : fallback;
+}
+
+// Escape a server message, then render `code` spans.
+function formatNote(text) {
+    const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return escaped.replace(/`([^`]+)`/g, '<code>$1</code>');
 }
 
 function saveSettings(settings) {
@@ -342,7 +436,7 @@ function showFinal(state) {
 function showError(message) {
     calloutKickerEl.textContent = 'Something went wrong';
     setCallout('Round interrupted.', 'is-error');
-    gameStatusEl.textContent = message || 'Check the server logs for details.';
+    gameStatusEl.textContent = (message || 'Check the server logs for details.').replace(/`/g, '');
     setPhase('Paused', false);
     for (const key of Object.keys(PLAYERS)) {
         const { clockLabel, reasoning } = PLAYERS[key].els;

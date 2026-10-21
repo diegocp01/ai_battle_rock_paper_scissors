@@ -38,42 +38,17 @@
                         <img src="/static/img/openai.webp" alt="" class="avatar">
                         <span class="config-title"><b>GPT.</b> Choose your challenger.</span>
                     </legend>
-                    <div class="tiles">
-                        <label class="tile">
-                            <input type="radio" name="gpt-model" value="gpt-5-mini">
-                            <span class="tile-body">
-                                <span class="tile-name">GPT-5 Mini</span>
-                                <span class="tile-tag">Minimal reasoning</span>
-                            </span>
-                        </label>
-                        <label class="tile">
-                            <input type="radio" name="gpt-model" value="gpt-5.1-low">
-                            <span class="tile-body">
-                                <span class="tile-name">GPT-5.1</span>
-                                <span class="tile-tag">Low effort</span>
-                            </span>
-                        </label>
-                        <label class="tile">
-                            <input type="radio" name="gpt-model" value="gpt-5.1" checked>
-                            <span class="tile-body">
-                                <span class="tile-name">GPT-5.1</span>
-                                <span class="tile-tag">Medium effort</span>
-                            </span>
-                        </label>
-                        <label class="tile">
-                            <input type="radio" name="gpt-model" value="gpt-5.2">
-                            <span class="tile-body">
-                                <span class="tile-name">GPT-5.2</span>
-                                <span class="tile-tag">Medium effort</span>
-                            </span>
-                        </label>
-                        <label class="tile">
-                            <input type="radio" name="gpt-model" value="gpt-5.2-high">
-                            <span class="tile-body">
-                                <span class="tile-name">GPT-5.2</span>
-                                <span class="tile-tag">High effort</span>
-                            </span>
-                        </label>
+                    <div class="config-body">
+                        <p id="gpt-note" class="config-note" hidden></p>
+                        <div id="gpt-tiles" class="tiles" aria-busy="true">
+                            <span class="tile-skeleton"></span>
+                            <span class="tile-skeleton"></span>
+                            <span class="tile-skeleton"></span>
+                        </div>
+                        <div class="effort">
+                            <span class="effort-label">Reasoning effort</span>
+                            <div id="gpt-effort" class="segmented"></div>
+                        </div>
                     </div>
                 </fieldset>
 
@@ -82,42 +57,17 @@
                         <img src="/static/img/anthropic.jpeg" alt="" class="avatar">
                         <span class="config-title"><b>Claude.</b> Choose its opponent.</span>
                     </legend>
-                    <div class="tiles">
-                        <label class="tile">
-                            <input type="radio" name="claude-model" value="claude-haiku-4.5-standard">
-                            <span class="tile-body">
-                                <span class="tile-name">Haiku 4.5</span>
-                                <span class="tile-tag">Standard</span>
-                            </span>
-                        </label>
-                        <label class="tile">
-                            <input type="radio" name="claude-model" value="claude-haiku-4.5" checked>
-                            <span class="tile-body">
-                                <span class="tile-name">Haiku 4.5</span>
-                                <span class="tile-tag">Extended thinking</span>
-                            </span>
-                        </label>
-                        <label class="tile">
-                            <input type="radio" name="claude-model" value="claude-sonnet-4.5-standard">
-                            <span class="tile-body">
-                                <span class="tile-name">Sonnet 4.5</span>
-                                <span class="tile-tag">Standard</span>
-                            </span>
-                        </label>
-                        <label class="tile">
-                            <input type="radio" name="claude-model" value="claude-sonnet-4.5">
-                            <span class="tile-body">
-                                <span class="tile-name">Sonnet 4.5</span>
-                                <span class="tile-tag">Extended thinking</span>
-                            </span>
-                        </label>
-                        <label class="tile">
-                            <input type="radio" name="claude-model" value="claude-opus-4.5">
-                            <span class="tile-body">
-                                <span class="tile-name">Opus 4.5</span>
-                                <span class="tile-tag">Extended thinking</span>
-                            </span>
-                        </label>
+                    <div class="config-body">
+                        <p id="claude-note" class="config-note" hidden></p>
+                        <div id="claude-tiles" class="tiles" aria-busy="true">
+                            <span class="tile-skeleton"></span>
+                            <span class="tile-skeleton"></span>
+                            <span class="tile-skeleton"></span>
+                        </div>
+                        <div class="effort">
+                            <span class="effort-label">Reasoning effort</span>
+                            <div id="claude-effort" class="segmented"></div>
+                        </div>
                     </div>
                 </fieldset>
 
@@ -137,7 +87,7 @@
 
             <div class="cta">
                 <button id="btn-run" class="btn btn-primary btn-large" type="button">Start Battle</button>
-                <p class="cta-note">Each round calls both models. Longer matches take a little longer.</p>
+                <p class="cta-note">Runs on your signed-in Codex and Claude Code accounts. No API keys needed.</p>
                 <p id="setup-error" class="setup-error" role="alert" hidden></p>
             </div>
         </section>
@@ -149,7 +99,7 @@
                 <div class="sb-side sb-gpt">
                     <img src="/static/img/openai.webp" alt="OpenAI" class="avatar">
                     <div class="sb-id">
-                        <span class="sb-org">OpenAI</span>
+                        <span class="sb-org">OpenAI Codex</span>
                         <span id="gpt-model-name" class="sb-model">GPT</span>
                     </div>
                     <span id="gpt-score" class="sb-score">0</span>
@@ -164,7 +114,7 @@
                 <div class="sb-side sb-claude">
                     <span id="claude-score" class="sb-score">0</span>
                     <div class="sb-id">
-                        <span class="sb-org">Anthropic</span>
+                        <span class="sb-org">Claude Code</span>
                         <span id="claude-model-name" class="sb-model">Claude</span>
                     </div>
                     <img src="/static/img/anthropic.jpeg" alt="Anthropic" class="avatar">
