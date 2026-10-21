@@ -113,9 +113,9 @@ function checkedValue(name) {
 function readSettings() {
     return {
         num_games: parseInt(checkedValue('game-count'), 10) || 3,
-        gpt_model: checkedValue('gpt-model'),
+        gpt_model: $('gpt-model').value || null,
         gpt_effort: checkedValue('gpt-effort'),
-        claude_model: checkedValue('claude-model'),
+        claude_model: $('claude-model').value || null,
         claude_effort: checkedValue('claude-effort'),
     };
 }
@@ -134,7 +134,7 @@ function restoreRounds() {
 }
 
 // Model lists come from the server: Codex reports its own models, and the
-// Claude Code CLI accepts aliases for each model family.
+// Claude list is a fixed set of model IDs.
 async function loadModels() {
     btnRun.disabled = true;
     try {
@@ -152,16 +152,17 @@ async function loadModels() {
 
 function renderModelOptions(key, info) {
     catalog[key] = info;
-    const tiles = $(`${key}-tiles`);
+    const select = $(`${key}-model`);
     const note = $(`${key}-note`);
-    tiles.innerHTML = '';
-    tiles.removeAttribute('aria-busy');
+    select.innerHTML = '';
 
     note.hidden = !info.message;
     if (info.message) note.innerHTML = formatNote(info.message);
 
     if (!info.models.length) {
-        tiles.appendChild(el('p', 'tiles-empty', 'No models available.'));
+        select.appendChild(el('option', null, 'No models available'));
+        select.disabled = true;
+        renderModelTag(key);
         renderEfforts(key);
         return;
     }
@@ -170,27 +171,33 @@ function renderModelOptions(key, info) {
     const selected = pickValue(savedSettings[`${key}_model`], ids, info.default_model || ids[0]);
 
     for (const model of info.models) {
-        const label = el('label', 'tile');
-        const input = document.createElement('input');
-        input.type = 'radio';
-        input.name = `${key}-model`;
-        input.value = model.id;
-        input.checked = model.id === selected;
-        input.addEventListener('change', () => renderEfforts(key));
-
-        const body = el('span', 'tile-body');
-        body.append(el('span', 'tile-name', model.name), el('span', 'tile-tag', model.tag || ''));
-        label.append(input, body);
-        tiles.appendChild(label);
+        const option = el('option', null, model.name);
+        option.value = model.id;
+        select.appendChild(option);
     }
+    select.value = selected;
+    select.disabled = false;
+    select.onchange = () => {
+        renderModelTag(key);
+        renderEfforts(key);
+    };
 
+    renderModelTag(key);
     renderEfforts(key, savedSettings[`${key}_effort`]);
+}
+
+function selectedModel(key) {
+    return (catalog[key]?.models || []).find((m) => m.id === $(`${key}-model`).value);
+}
+
+function renderModelTag(key) {
+    $(`${key}-model-tag`).textContent = selectedModel(key)?.tag || '';
 }
 
 function renderEfforts(key, preferred) {
     const container = $(`${key}-effort`);
     const current = preferred || checkedValue(`${key}-effort`);
-    const model = (catalog[key]?.models || []).find((m) => m.id === checkedValue(`${key}-model`));
+    const model = selectedModel(key);
     container.innerHTML = '';
     container.parentElement.hidden = !model;
     if (!model) return;

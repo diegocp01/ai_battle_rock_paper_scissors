@@ -378,4 +378,8 @@ def get_client_state(state):
 
 
 if __name__ == '__main__':
+    # In debug mode the reloader's parent process only watches files; warm up
+    # Codex in the process that actually serves requests.
+    if os.environ.get('WERKZEUG_RUN_MAIN') == 'true':
+        codex_sdk.warm_up()
     app.run(debug=True, port=5001)
