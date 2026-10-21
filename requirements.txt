@@ -1,5 +1,2 @@
-openai
-pydantic
-python-dotenv
-anthropic
 flask
+openai-codex
