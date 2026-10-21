@@ -1,0 +1,662 @@
+{
+  "schema_version": 1,
+  "games": [
+    {
+      "id": "227377b0-ad81-46a8-a184-dcedd19869b0",
+      "started_at": "2026-10-21T21:09:25.857197+00:00",
+      "completed_at": "2026-10-21T21:10:06.613446+00:00",
+      "experiment_id": "2026-10-21-matched-effort:gpt-6-luna:low",
+      "current_round": 3,
+      "total_rounds": 3,
+      "round_in_progress": false,
+      "all_rounds_complete": true,
+      "gpt_choice": "scissors",
+      "claude_choice": "rock",
+      "round_winner": "claude",
+      "round_history": [
+        {
+          "round": 1,
+          "time": "17:09:59",
+          "gpt_choice": "scissors",
+          "claude_choice": "paper",
+          "winner": "gpt",
+          "gpt_time": 33.47,
+          "claude_time": 3.49,
+          "gpt_reasoning": "With no previous rounds to infer a pattern from, I’ll make an unpredictable choice.",
+          "claude_reasoning": "First round with no history, so there's no pattern to exploit. Many players open with rock, so paper is a reasonable unpredictable-leaning choice.",
+          "played_at": "2026-10-21T21:09:59.329660+00:00"
+        },
+        {
+          "round": 2,
+          "time": "17:10:02",
+          "gpt_choice": "paper",
+          "claude_choice": "rock",
+          "winner": "gpt",
+          "gpt_time": 2.83,
+          "claude_time": 3.59,
+          "gpt_reasoning": "I’ll vary my choice after opening with scissors; paper is a reasonable unpredictable pick.",
+          "claude_reasoning": "The opponent opened with scissors, and many players repeat or switch from their last throw, so rock beats scissors if they repeat and is a reasonable counter to a shift toward paper. Rock also gives a fair chance to get back into the match.",
+          "played_at": "2026-10-21T21:10:02.923907+00:00"
+        },
+        {
+          "round": 3,
+          "time": "17:10:06",
+          "gpt_choice": "scissors",
+          "claude_choice": "rock",
+          "winner": "claude",
+          "gpt_time": 2.6,
+          "claude_time": 3.68,
+          "gpt_reasoning": "Your opponent has played paper and then rock, so scissors is a reasonable counter to that pattern while keeping the final move unpredictable.",
+          "claude_reasoning": "The opponent has played scissors and then paper, so there's no clear pattern to exploit. Rock is a reasonable pick that beats scissors, and it's a fresh choice rather than one I've already played.",
+          "played_at": "2026-10-21T21:10:06.613435+00:00"
+        }
+      ],
+      "gpt_reasoning": "Your opponent has played paper and then rock, so scissors is a reasonable counter to that pattern while keeping the final move unpredictable.",
+      "claude_reasoning": "The opponent has played scissors and then paper, so there's no clear pattern to exploit. Rock is a reasonable pick that beats scissors, and it's a fresh choice rather than one I've already played.",
+      "gpt_stats": {
+        "wins": 2,
+        "losses": 1,
+        "draws": 0
+      },
+      "claude_stats": {
+        "wins": 1,
+        "losses": 2,
+        "draws": 0
+      },
+      "gpt_total_time": 38.9,
+      "claude_total_time": 10.76,
+      "gpt_last_time": 2.6,
+      "claude_last_time": 3.68,
+      "gpt_model": "gpt-6-luna",
+      "gpt_effort": "low",
+      "claude_model": "claude-haiku-5-5",
+      "claude_effort": "low",
+      "gpt_display_name": "GPT-6-Luna · Low",
+      "claude_display_name": "Claude Haiku 5.5 · Low"
+    },
+    {
+      "id": "615f05ae-4699-49cd-85db-b8608b19a63d",
+      "started_at": "2026-10-21T21:10:06.615567+00:00",
+      "completed_at": "2026-10-21T21:10:17.807879+00:00",
+      "experiment_id": "2026-10-21-matched-effort:gpt-6-luna:medium",
+      "current_round": 3,
+      "total_rounds": 3,
+      "round_in_progress": false,
+      "all_rounds_complete": true,
+      "gpt_choice": "rock",
+      "claude_choice": "scissors",
+      "round_winner": "gpt",
+      "round_history": [
+        {
+          "round": 1,
+          "time": "17:10:09",
+          "gpt_choice": "scissors",
+          "claude_choice": "paper",
+          "winner": "gpt",
+          "gpt_time": 2.41,
+          "claude_time": 3.32,
+          "gpt_reasoning": "With no prior rounds to infer a pattern from, I’ll choose unpredictably.",
+          "claude_reasoning": "With no history to go on, there's no pattern to exploit. Many people open with rock, so paper is a reasonable first pick to exploit that common tendency.",
+          "played_at": "2026-10-21T21:10:09.939459+00:00"
+        },
+        {
+          "round": 2,
+          "time": "17:10:13",
+          "gpt_choice": "paper",
+          "claude_choice": "rock",
+          "winner": "gpt",
+          "gpt_time": 2.31,
+          "claude_time": 3.32,
+          "gpt_reasoning": "With no reliable pattern from one round, I’ll vary my choice and play paper.",
+          "claude_reasoning": "I lost round 1 with paper, so the opponent may expect me to switch to scissors and may repeat scissors or move to rock. Rock beats scissors and avoids the obvious counter-switch from paper.",
+          "played_at": "2026-10-21T21:10:13.351292+00:00"
+        },
+        {
+          "round": 3,
+          "time": "17:10:17",
+          "gpt_choice": "rock",
+          "claude_choice": "scissors",
+          "winner": "gpt",
+          "gpt_time": 3.79,
+          "claude_time": 4.45,
+          "gpt_reasoning": "I’ve switched choices in each previous round, so I’ll continue that pattern with rock.",
+          "claude_reasoning": "The opponent has played scissors and then paper, so there's no clear pattern yet. Scissors is a reasonable unpredictable pick that beats paper, which the opponent just played once.",
+          "played_at": "2026-10-21T21:10:17.807865+00:00"
+        }
+      ],
+      "gpt_reasoning": "I’ve switched choices in each previous round, so I’ll continue that pattern with rock.",
+      "claude_reasoning": "The opponent has played scissors and then paper, so there's no clear pattern yet. Scissors is a reasonable unpredictable pick that beats paper, which the opponent just played once.",
+      "gpt_stats": {
+        "wins": 3,
+        "losses": 0,
+        "draws": 0
+      },
+      "claude_stats": {
+        "wins": 0,
+        "losses": 3,
+        "draws": 0
+      },
+      "gpt_total_time": 8.51,
+      "claude_total_time": 11.09,
+      "gpt_last_time": 3.79,
+      "claude_last_time": 4.45,
+      "gpt_model": "gpt-6-luna",
+      "gpt_effort": "medium",
+      "claude_model": "claude-haiku-5-5",
+      "claude_effort": "medium",
+      "gpt_display_name": "GPT-6-Luna · Medium",
+      "claude_display_name": "Claude Haiku 5.5 · Medium"
+    },
+    {
+      "id": "1c62360c-f7ea-46e1-86ee-e2542b23ea88",
+      "started_at": "2026-10-21T21:10:18.088072+00:00",
+      "completed_at": "2026-10-21T21:10:31.707859+00:00",
+      "experiment_id": "2026-10-21-matched-effort:gpt-6-luna:high",
+      "current_round": 3,
+      "total_rounds": 3,
+      "round_in_progress": false,
+      "all_rounds_complete": true,
+      "gpt_choice": "paper",
+      "claude_choice": "paper",
+      "round_winner": "draw",
+      "round_history": [
+        {
+          "round": 1,
+          "time": "17:10:22",
+          "gpt_choice": "scissors",
+          "claude_choice": "scissors",
+          "winner": "draw",
+          "gpt_time": 4.51,
+          "claude_time": 2.74,
+          "gpt_reasoning": "**Choosing scissors**",
+          "claude_reasoning": "First round with no history, so there's no pattern to exploit. Paper is a common opening choice, so I'll go with scissors to be a bit less predictable.",
+          "played_at": "2026-10-21T21:10:22.595036+00:00"
+        },
+        {
+          "round": 2,
+          "time": "17:10:27",
+          "gpt_choice": "rock",
+          "claude_choice": "rock",
+          "winner": "draw",
+          "gpt_time": 5.03,
+          "claude_time": 3.27,
+          "gpt_reasoning": "**Choosing rock**",
+          "claude_reasoning": "The opponent opened with scissors, and a repeat is a common move, so rock is a good counter. Rock beats scissors and also ties rock, so it has no strict weakness to a single repeat.",
+          "played_at": "2026-10-21T21:10:27.726072+00:00"
+        },
+        {
+          "round": 3,
+          "time": "17:10:31",
+          "gpt_choice": "paper",
+          "claude_choice": "paper",
+          "winner": "draw",
+          "gpt_time": 3.98,
+          "claude_time": 3.62,
+          "gpt_reasoning": "The first two rounds were draws, so I’ll switch to paper to avoid repeating either choice and cover a possible rock.",
+          "claude_reasoning": "The opponent has played scissors and then rock, so there's no clear pattern yet. Both earlier rounds were draws, and the opponent may be repeating or mirroring my last throw, so I'm picking paper to beat a repeated rock.",
+          "played_at": "2026-10-21T21:10:31.707837+00:00"
+        }
+      ],
+      "gpt_reasoning": "The first two rounds were draws, so I’ll switch to paper to avoid repeating either choice and cover a possible rock.",
+      "claude_reasoning": "The opponent has played scissors and then rock, so there's no clear pattern yet. Both earlier rounds were draws, and the opponent may be repeating or mirroring my last throw, so I'm picking paper to beat a repeated rock.",
+      "gpt_stats": {
+        "wins": 0,
+        "losses": 0,
+        "draws": 3
+      },
+      "claude_stats": {
+        "wins": 0,
+        "losses": 0,
+        "draws": 3
+      },
+      "gpt_total_time": 13.52,
+      "claude_total_time": 9.63,
+      "gpt_last_time": 3.98,
+      "claude_last_time": 3.62,
+      "gpt_model": "gpt-6-luna",
+      "gpt_effort": "high",
+      "claude_model": "claude-haiku-5-5",
+      "claude_effort": "high",
+      "gpt_display_name": "GPT-6-Luna · High",
+      "claude_display_name": "Claude Haiku 5.5 · High"
+    },
+    {
+      "id": "26833132-2cf7-47ad-a54d-86963d98f959",
+      "started_at": "2026-10-21T21:10:31.711610+00:00",
+      "completed_at": "2026-10-21T21:10:44.349074+00:00",
+      "experiment_id": "2026-10-21-matched-effort:gpt-6.1-sol:low",
+      "current_round": 3,
+      "total_rounds": 3,
+      "round_in_progress": false,
+      "all_rounds_complete": true,
+      "gpt_choice": "rock",
+      "claude_choice": "scissors",
+      "round_winner": "gpt",
+      "round_history": [
+        {
+          "round": 1,
+          "time": "17:10:34",
+          "gpt_choice": "scissors",
+          "claude_choice": "paper",
+          "winner": "gpt",
+          "gpt_time": 2.76,
+          "claude_time": 2.91,
+          "gpt_reasoning": "No history to exploit, so I’ll open with scissors.",
+          "claude_reasoning": "First round with no history, so I'm picking arbitrarily. Many players open with rock, so paper is a slight edge.",
+          "played_at": "2026-10-21T21:10:34.627097+00:00"
+        },
+        {
+          "round": 2,
+          "time": "17:10:38",
+          "gpt_choice": "paper",
+          "claude_choice": "rock",
+          "winner": "gpt",
+          "gpt_time": 3.35,
+          "claude_time": 2.42,
+          "gpt_reasoning": "The opponent may switch to rock after losing to scissors, so I’ll counter with paper.",
+          "claude_reasoning": "The opponent won with scissors last round. They may repeat it, or switch to counter my paper. Rock beats scissors and ties with rock, so it's a reasonable pick.",
+          "played_at": "2026-10-21T21:10:38.005784+00:00"
+        },
+        {
+          "round": 3,
+          "time": "17:10:44",
+          "gpt_choice": "rock",
+          "claude_choice": "scissors",
+          "winner": "gpt",
+          "gpt_time": 6.34,
+          "claude_time": 2.45,
+          "gpt_reasoning": "The opponent may switch to scissors after paper and rock, so I’ll pick rock to counter that possibility.",
+          "claude_reasoning": "The opponent played scissors, then paper, so they may be moving up a step in the sequence (rock, paper, scissors). That would make rock their next pick, and scissors beats paper, so I'm picking scissors. It's a guess, since the game is mostly random.",
+          "played_at": "2026-10-21T21:10:44.349066+00:00"
+        }
+      ],
+      "gpt_reasoning": "The opponent may switch to scissors after paper and rock, so I’ll pick rock to counter that possibility.",
+      "claude_reasoning": "The opponent played scissors, then paper, so they may be moving up a step in the sequence (rock, paper, scissors). That would make rock their next pick, and scissors beats paper, so I'm picking scissors. It's a guess, since the game is mostly random.",
+      "gpt_stats": {
+        "wins": 3,
+        "losses": 0,
+        "draws": 0
+      },
+      "claude_stats": {
+        "wins": 0,
+        "losses": 3,
+        "draws": 0
+      },
+      "gpt_total_time": 12.45,
+      "claude_total_time": 7.78,
+      "gpt_last_time": 6.34,
+      "claude_last_time": 2.45,
+      "gpt_model": "gpt-6.1-sol",
+      "gpt_effort": "low",
+      "claude_model": "claude-sonnet-5-5",
+      "claude_effort": "low",
+      "gpt_display_name": "GPT-6.1-Sol · Low",
+      "claude_display_name": "Claude Sonnet 5.5 · Low"
+    },
+    {
+      "id": "10ce7a4f-4558-4edf-8259-20e1f362cf07",
+      "started_at": "2026-10-21T21:10:44.371208+00:00",
+      "completed_at": "2026-10-21T21:10:58.291763+00:00",
+      "experiment_id": "2026-10-21-matched-effort:gpt-6.1-sol:medium",
+      "current_round": 3,
+      "total_rounds": 3,
+      "round_in_progress": false,
+      "all_rounds_complete": true,
+      "gpt_choice": "rock",
+      "claude_choice": "paper",
+      "round_winner": "claude",
+      "round_history": [
+        {
+          "round": 1,
+          "time": "17:10:47",
+          "gpt_choice": "scissors",
+          "claude_choice": "paper",
+          "winner": "gpt",
+          "gpt_time": 3.52,
+          "claude_time": 2.81,
+          "gpt_reasoning": "No history yet, so I’ll open with scissors rather than assume a pattern.",
+          "claude_reasoning": "No history, so I'm picking at random. Many players open with rock, so paper is a slight edge.",
+          "played_at": "2026-10-21T21:10:47.892595+00:00"
+        },
+        {
+          "round": 2,
+          "time": "17:10:52",
+          "gpt_choice": "paper",
+          "claude_choice": "rock",
+          "winner": "gpt",
+          "gpt_time": 5.09,
+          "claude_time": 2.31,
+          "gpt_reasoning": "**Considering strategy choices**\n\nI need to choose a paper to counter rock effectively since that's the previous choice. It’s essential for me to keep my strategy concise and well-calibrated to anticipate the opponent's moves. I wonder if there's a way to refine my approach or if there’s a better alternative to consider. It might be interesting to think through the possible scenarios and outcomes based on this choice. Let’s ensure I’m making a smart decision!",
+          "claude_reasoning": "The opponent just won with scissors. They might repeat it, or switch to rock to beat my paper if I repeat. Rock beats scissors, so I'll pick rock.",
+          "played_at": "2026-10-21T21:10:52.983979+00:00"
+        },
+        {
+          "round": 3,
+          "time": "17:10:58",
+          "gpt_choice": "rock",
+          "claude_choice": "paper",
+          "winner": "claude",
+          "gpt_time": 5.29,
+          "claude_time": 3.26,
+          "gpt_reasoning": "**Anticipating moves in rock-paper-scissors**\n\nI need to think strategically about how to anticipate my opponent's next move in rock-paper-scissors. If I see them choosing scissors, then I should remember that rock beats scissors. I want to keep my analysis concise and not overstate things, focusing on the simple strategy involved in recognizing the cycle of choices in the game. So, I’ll keep it straightforward and plan my next move accordingly!",
+          "claude_reasoning": "The opponent played scissors and then paper, so they might be moving up the cycle. If that continues, they'd play rock next, and paper beats rock. The result is already decided, so this is just a best guess.",
+          "played_at": "2026-10-21T21:10:58.291730+00:00"
+        }
+      ],
+      "gpt_reasoning": "**Anticipating moves in rock-paper-scissors**\n\nI need to think strategically about how to anticipate my opponent's next move in rock-paper-scissors. If I see them choosing scissors, then I should remember that rock beats scissors. I want to keep my analysis concise and not overstate things, focusing on the simple strategy involved in recognizing the cycle of choices in the game. So, I’ll keep it straightforward and plan my next move accordingly!",
+      "claude_reasoning": "The opponent played scissors and then paper, so they might be moving up the cycle. If that continues, they'd play rock next, and paper beats rock. The result is already decided, so this is just a best guess.",
+      "gpt_stats": {
+        "wins": 2,
+        "losses": 1,
+        "draws": 0
+      },
+      "claude_stats": {
+        "wins": 1,
+        "losses": 2,
+        "draws": 0
+      },
+      "gpt_total_time": 13.9,
+      "claude_total_time": 8.38,
+      "gpt_last_time": 5.29,
+      "claude_last_time": 3.26,
+      "gpt_model": "gpt-6.1-sol",
+      "gpt_effort": "medium",
+      "claude_model": "claude-sonnet-5-5",
+      "claude_effort": "medium",
+      "gpt_display_name": "GPT-6.1-Sol · Medium",
+      "claude_display_name": "Claude Sonnet 5.5 · Medium"
+    },
+    {
+      "id": "8dab80ac-ee09-41f7-9985-9e13a15cdc21",
+      "started_at": "2026-10-21T21:10:58.304466+00:00",
+      "completed_at": "2026-10-21T21:11:16.257225+00:00",
+      "experiment_id": "2026-10-21-matched-effort:gpt-6.1-sol:high",
+      "current_round": 3,
+      "total_rounds": 3,
+      "round_in_progress": false,
+      "all_rounds_complete": true,
+      "gpt_choice": "rock",
+      "claude_choice": "scissors",
+      "round_winner": "gpt",
+      "round_history": [
+        {
+          "round": 1,
+          "time": "17:11:03",
+          "gpt_choice": "scissors",
+          "claude_choice": "paper",
+          "winner": "gpt",
+          "gpt_time": 5.07,
+          "claude_time": 2.76,
+          "gpt_reasoning": "**Choosing a straightforward model**\n\nI need to pick a straightforward approach. When considering options, paper seems to be the most popular model. Choosing scissors may not have a solid historical basis, as it feels somewhat arbitrary and not truly random. I'll stick with a more reliable choice and ensure the output is in a short JSON format. Keeping things simple and clear is my goal here!",
+          "claude_reasoning": "First round with no history, so I'm picking at random. Paper is a reasonable opening because many players open with rock.",
+          "played_at": "2026-10-21T21:11:03.373434+00:00"
+        },
+        {
+          "round": 2,
+          "time": "17:11:10",
+          "gpt_choice": "paper",
+          "claude_choice": "rock",
+          "winner": "gpt",
+          "gpt_time": 7.46,
+          "claude_time": 4.16,
+          "gpt_reasoning": "**Evaluating move strategy**\n\nI need to decide on a succinct JSON representation for my strategy. There’s a chance my opponent might switch from scissors to something that can beat my current choice of scissors. If they think I'll repeat scissors, they might play rock. My thought process is unclear without strong data patterns, but if I choose rock, it could counter a shift from scissors. I think I’ll choose paper to counter, anticipating their response to rock. It’s a clear choice to avoid overplaying my hand.",
+          "claude_reasoning": "The opponent played scissors last round. They may repeat it, or they may switch because they expect me to counter it. Rock beats scissors and ties with rock, so it's a reasonable pick either way.",
+          "played_at": "2026-10-21T21:11:10.837263+00:00"
+        },
+        {
+          "round": 3,
+          "time": "17:11:16",
+          "gpt_choice": "rock",
+          "claude_choice": "scissors",
+          "winner": "gpt",
+          "gpt_time": 5.4,
+          "claude_time": 5.38,
+          "gpt_reasoning": "**Deciding on choices**\n\nI need to make a decision here. If my opponent has shown a pattern where they play paper, then I should pick rock for the next round since rock beats scissors. It feels like a cautious but strategic move. I wonder if it'll work out or if I’m overthinking this. But hey, isn't that what makes it fun? Just one short explanation: I think being careful is key in this game!",
+          "claude_reasoning": "The opponent played scissors, then paper, so they may be moving up a step each round (scissors → paper → rock?). Scissors beats paper and draws with scissors, but it loses to rock. If they follow that pattern and play rock, I'd want paper. If they instead counter my last pick (rock) with paper again, scissors wins. The game is nearly random at this point, so I'll go with scissors.",
+          "played_at": "2026-10-21T21:11:16.257205+00:00"
+        }
+      ],
+      "gpt_reasoning": "**Deciding on choices**\n\nI need to make a decision here. If my opponent has shown a pattern where they play paper, then I should pick rock for the next round since rock beats scissors. It feels like a cautious but strategic move. I wonder if it'll work out or if I’m overthinking this. But hey, isn't that what makes it fun? Just one short explanation: I think being careful is key in this game!",
+      "claude_reasoning": "The opponent played scissors, then paper, so they may be moving up a step each round (scissors → paper → rock?). Scissors beats paper and draws with scissors, but it loses to rock. If they follow that pattern and play rock, I'd want paper. If they instead counter my last pick (rock) with paper again, scissors wins. The game is nearly random at this point, so I'll go with scissors.",
+      "gpt_stats": {
+        "wins": 3,
+        "losses": 0,
+        "draws": 0
+      },
+      "claude_stats": {
+        "wins": 0,
+        "losses": 3,
+        "draws": 0
+      },
+      "gpt_total_time": 17.93,
+      "claude_total_time": 12.3,
+      "gpt_last_time": 5.4,
+      "claude_last_time": 5.38,
+      "gpt_model": "gpt-6.1-sol",
+      "gpt_effort": "high",
+      "claude_model": "claude-sonnet-5-5",
+      "claude_effort": "high",
+      "gpt_display_name": "GPT-6.1-Sol · High",
+      "claude_display_name": "Claude Sonnet 5.5 · High"
+    },
+    {
+      "id": "3e25cdce-fc82-4e6a-bde1-a1559030b040",
+      "started_at": "2026-10-21T21:11:16.276986+00:00",
+      "completed_at": "2026-10-21T21:11:28.510912+00:00",
+      "experiment_id": "2026-10-21-matched-effort:gpt-6-astra:low",
+      "current_round": 3,
+      "total_rounds": 3,
+      "round_in_progress": false,
+      "all_rounds_complete": true,
+      "gpt_choice": "rock",
+      "claude_choice": "scissors",
+      "round_winner": "gpt",
+      "round_history": [
+        {
+          "round": 1,
+          "time": "17:11:20",
+          "gpt_choice": "scissors",
+          "claude_choice": "paper",
+          "winner": "gpt",
+          "gpt_time": 4.54,
+          "claude_time": 3.93,
+          "gpt_reasoning": "No history to exploit, so I’m opening with scissors without assuming an opponent pattern.",
+          "claude_reasoning": "There's no history yet, so I'm going with paper. AI opponents often open with rock, and paper beats it.",
+          "played_at": "2026-10-21T21:11:20.821065+00:00"
+        },
+        {
+          "round": 2,
+          "time": "17:11:24",
+          "gpt_choice": "paper",
+          "claude_choice": "rock",
+          "winner": "gpt",
+          "gpt_time": 3.83,
+          "claude_time": 3.74,
+          "gpt_reasoning": "The opponent might switch to rock to counter my previous scissors, so I’ll choose paper.",
+          "claude_reasoning": "My opponent won round 1 with scissors, and players often repeat a winning move. Rock beats scissors.",
+          "played_at": "2026-10-21T21:11:24.672853+00:00"
+        },
+        {
+          "round": 3,
+          "time": "17:11:28",
+          "gpt_choice": "rock",
+          "claude_choice": "scissors",
+          "winner": "gpt",
+          "gpt_time": 3.15,
+          "claude_time": 3.79,
+          "gpt_reasoning": "The opponent may continue from paper to rock to scissors. Rock would beat that next move.",
+          "claude_reasoning": "The opponent has picked the move that beats my previous one each round: scissors after my paper, paper after my rock. If they keep doing that, they'll play paper again, or they'll just repeat paper. Scissors wins in both cases.",
+          "played_at": "2026-10-21T21:11:28.510888+00:00"
+        }
+      ],
+      "gpt_reasoning": "The opponent may continue from paper to rock to scissors. Rock would beat that next move.",
+      "claude_reasoning": "The opponent has picked the move that beats my previous one each round: scissors after my paper, paper after my rock. If they keep doing that, they'll play paper again, or they'll just repeat paper. Scissors wins in both cases.",
+      "gpt_stats": {
+        "wins": 3,
+        "losses": 0,
+        "draws": 0
+      },
+      "claude_stats": {
+        "wins": 0,
+        "losses": 3,
+        "draws": 0
+      },
+      "gpt_total_time": 11.52,
+      "claude_total_time": 11.46,
+      "gpt_last_time": 3.15,
+      "claude_last_time": 3.79,
+      "gpt_model": "gpt-6-astra",
+      "gpt_effort": "low",
+      "claude_model": "claude-opus-5-5",
+      "claude_effort": "low",
+      "gpt_display_name": "GPT-6-Astra · Low",
+      "claude_display_name": "Claude Opus 5.5 · Low"
+    },
+    {
+      "id": "66e8a477-699f-4590-84b7-8757a057ead6",
+      "started_at": "2026-10-21T21:11:28.551688+00:00",
+      "completed_at": "2026-10-21T21:11:41.832611+00:00",
+      "experiment_id": "2026-10-21-matched-effort:gpt-6-astra:medium",
+      "current_round": 3,
+      "total_rounds": 3,
+      "round_in_progress": false,
+      "all_rounds_complete": true,
+      "gpt_choice": "rock",
+      "claude_choice": "paper",
+      "round_winner": "claude",
+      "round_history": [
+        {
+          "round": 1,
+          "time": "17:11:32",
+          "gpt_choice": "scissors",
+          "claude_choice": "paper",
+          "winner": "gpt",
+          "gpt_time": 4.07,
+          "claude_time": 3.0,
+          "gpt_reasoning": "No history to exploit, so I’m choosing scissors without assuming an opponent pattern.",
+          "claude_reasoning": "There's no history yet, so I'm picking paper. A lot of opponents open with rock, and paper beats it.",
+          "played_at": "2026-10-21T21:11:32.622671+00:00"
+        },
+        {
+          "round": 2,
+          "time": "17:11:35",
+          "gpt_choice": "paper",
+          "claude_choice": "rock",
+          "winner": "gpt",
+          "gpt_time": 3.15,
+          "claude_time": 3.02,
+          "gpt_reasoning": "The opponent may switch to rock after losing to scissors, so I’ll counter with paper.",
+          "claude_reasoning": "My opponent won round 1 with scissors, and players who win often repeat the same move. Rock beats scissors.",
+          "played_at": "2026-10-21T21:11:35.818444+00:00"
+        },
+        {
+          "round": 3,
+          "time": "17:11:41",
+          "gpt_choice": "rock",
+          "claude_choice": "paper",
+          "winner": "claude",
+          "gpt_time": 3.78,
+          "claude_time": 5.96,
+          "gpt_reasoning": "The opponent may continue from paper to rock to scissors, so I’ll try rock to counter that possible pattern.",
+          "claude_reasoning": "The opponent played scissors, then paper. If they keep cycling that way, rock comes next, and paper beats rock. Two rounds isn't much of a pattern, so this is still a guess.",
+          "played_at": "2026-10-21T21:11:41.832601+00:00"
+        }
+      ],
+      "gpt_reasoning": "The opponent may continue from paper to rock to scissors, so I’ll try rock to counter that possible pattern.",
+      "claude_reasoning": "The opponent played scissors, then paper. If they keep cycling that way, rock comes next, and paper beats rock. Two rounds isn't much of a pattern, so this is still a guess.",
+      "gpt_stats": {
+        "wins": 2,
+        "losses": 1,
+        "draws": 0
+      },
+      "claude_stats": {
+        "wins": 1,
+        "losses": 2,
+        "draws": 0
+      },
+      "gpt_total_time": 11.0,
+      "claude_total_time": 11.98,
+      "gpt_last_time": 3.78,
+      "claude_last_time": 5.96,
+      "gpt_model": "gpt-6-astra",
+      "gpt_effort": "medium",
+      "claude_model": "claude-opus-5-5",
+      "claude_effort": "medium",
+      "gpt_display_name": "GPT-6-Astra · Medium",
+      "claude_display_name": "Claude Opus 5.5 · Medium"
+    },
+    {
+      "id": "eda33dca-59db-47ea-b178-48997efcd757",
+      "started_at": "2026-10-21T21:11:41.893777+00:00",
+      "completed_at": "2026-10-21T21:11:54.904174+00:00",
+      "experiment_id": "2026-10-21-matched-effort:gpt-6-astra:high",
+      "current_round": 3,
+      "total_rounds": 3,
+      "round_in_progress": false,
+      "all_rounds_complete": true,
+      "gpt_choice": "rock",
+      "claude_choice": "paper",
+      "round_winner": "claude",
+      "round_history": [
+        {
+          "round": 1,
+          "time": "17:11:45",
+          "gpt_choice": "scissors",
+          "claude_choice": "paper",
+          "winner": "gpt",
+          "gpt_time": 3.63,
+          "claude_time": 3.82,
+          "gpt_reasoning": "No history to exploit, so I’ll open with scissors without assuming an opponent pattern.",
+          "claude_reasoning": "There's no history yet, so nothing to read. Many AI opponents seem to favor rock in the opening round, so paper is a reasonable pick that also isn't a bad one against a random choice.",
+          "played_at": "2026-10-21T21:11:45.716559+00:00"
+        },
+        {
+          "round": 2,
+          "time": "17:11:49",
+          "gpt_choice": "paper",
+          "claude_choice": "rock",
+          "winner": "gpt",
+          "gpt_time": 4.12,
+          "claude_time": 4.02,
+          "gpt_reasoning": "The opponent might switch to rock to counter my last move, so I’ll choose paper.",
+          "claude_reasoning": "My opponent won round 1 with scissors, and players who win often play the same thing again. Rock beats scissors, so it counters a repeat.",
+          "played_at": "2026-10-21T21:11:49.930351+00:00"
+        },
+        {
+          "round": 3,
+          "time": "17:11:54",
+          "gpt_choice": "rock",
+          "claude_choice": "paper",
+          "winner": "claude",
+          "gpt_time": 4.51,
+          "claude_time": 4.9,
+          "gpt_reasoning": "**Choosing rock**",
+          "claude_reasoning": "The opponent played scissors, then paper. If they continue that order, rock comes next, and paper beats rock.",
+          "played_at": "2026-10-21T21:11:54.904144+00:00"
+        }
+      ],
+      "gpt_reasoning": "**Choosing rock**",
+      "claude_reasoning": "The opponent played scissors, then paper. If they continue that order, rock comes next, and paper beats rock.",
+      "gpt_stats": {
+        "wins": 2,
+        "losses": 1,
+        "draws": 0
+      },
+      "claude_stats": {
+        "wins": 1,
+        "losses": 2,
+        "draws": 0
+      },
+      "gpt_total_time": 12.26,
+      "claude_total_time": 12.74,
+      "gpt_last_time": 4.51,
+      "claude_last_time": 4.9,
+      "gpt_model": "gpt-6-astra",
+      "gpt_effort": "high",
+      "claude_model": "claude-opus-5-5",
+      "claude_effort": "high",
+      "gpt_display_name": "GPT-6-Astra · High",
+      "claude_display_name": "Claude Opus 5.5 · High"
+    }
+  ]
+}

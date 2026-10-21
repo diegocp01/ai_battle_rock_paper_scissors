@@ -1,18 +1,36 @@
 from flask import Flask, render_template, jsonify, request
-import random
+import copy
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime
+from datetime import datetime, timezone
+from functools import wraps
+import threading
+from uuid import uuid4
 import time
 import os
 
 from players import PlayerError, claude_cli, codex_sdk
 from players.common import EFFORT_LABELS
+from results_store import read_results, save_game
 
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
 # Server-side game state storage
 GAME_STATE = {}
+GAME_LOCK = threading.Lock()
+
+
+def game_mutation(fn):
+    """Reject overlapping requests instead of replaying or skipping a round."""
+    @wraps(fn)
+    def wrapped(*args, **kwargs):
+        if not GAME_LOCK.acquire(blocking=False):
+            return jsonify({'error': 'A round is in progress. Please wait.'}), 409
+        try:
+            return fn(*args, **kwargs)
+        finally:
+            GAME_LOCK.release()
+    return wrapped
 
 # Rock Paper Scissors choices
 VALID_CHOICES = ['rock', 'paper', 'scissors']
@@ -45,6 +63,10 @@ def init_game_state(gpt_model=None, gpt_effort=None, claude_model=None, claude_e
     """Initialize a fresh game state."""
     gpt_info = codex_sdk.find_model(gpt_model) or {}
     return {
+        'id': str(uuid4()),
+        'started_at': datetime.now(timezone.utc).isoformat(),
+        'completed_at': None,
+        'experiment_id': None,
         'current_round': 1,
         'total_rounds': 1,
         'round_in_progress': False,
@@ -156,6 +178,21 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/results')
+def results_page():
+    return render_template('results.html')
+
+
+@app.route('/api/results')
+def results_api():
+    try:
+        response = jsonify(read_results())
+        response.headers['Cache-Control'] = 'no-store'
+        return response
+    except (OSError, ValueError):
+        return jsonify({'error': 'Could not read the saved results. The archive was preserved.'}), 500
+
+
 @app.route('/api/models', methods=['GET'])
 def get_models():
     """Models each player can use, plus whether its CLI or SDK is ready."""
@@ -166,11 +203,17 @@ def get_models():
 
 
 @app.route('/api/start-games', methods=['POST'])
+@game_mutation
 def start_games():
     """Start a new series of rounds."""
     global GAME_STATE
-    data = request.get_json()
-    num_rounds = int(data.get('num_games', 1))
+    data = request.get_json(silent=True) or {}
+    if not isinstance(data, dict):
+        return jsonify({'error': 'Game settings must be an object.'}), 400
+    try:
+        num_rounds = int(data.get('num_games', 1))
+    except (TypeError, ValueError):
+        return jsonify({'error': 'Rounds must be a number.'}), 400
     num_rounds = max(1, min(10, num_rounds))
     
     gpt_status = codex_sdk.status()
@@ -187,6 +230,9 @@ def start_games():
 
     state = init_game_state(gpt_model, gpt_effort, claude_model, claude_effort)
     state['total_rounds'] = num_rounds
+    experiment_id = data.get('experiment_id')
+    if isinstance(experiment_id, str):
+        state['experiment_id'] = experiment_id[:100]
     GAME_STATE = state
     
     return jsonify({
@@ -205,6 +251,7 @@ def get_game_state_route():
 
 
 @app.route('/api/next-move', methods=['POST'])
+@game_mutation
 def next_move():
     """Execute the next round - both players make a choice."""
     global GAME_STATE
@@ -214,6 +261,12 @@ def next_move():
     
     if state['all_rounds_complete']:
         return jsonify({'error': 'All rounds complete'}), 400
+
+    if len(state['round_history']) >= state['current_round']:
+        return jsonify({'error': 'This round already has a result. Advance to the next round.'}), 409
+
+    # Commit memory only after the snapshot has reached disk.
+    state = copy.deepcopy(state)
     
     state['round_in_progress'] = True
     current_round = state['current_round']
@@ -245,7 +298,6 @@ def next_move():
 
     for label, result in (('GPT (Codex)', gpt_result), ('Claude (Claude Code)', claude_result)):
         if isinstance(result, Exception):
-            state['round_in_progress'] = False
             return jsonify({'error': f'{label} error: {result}'}), 500
 
     (gpt_choice, gpt_reasoning), gpt_elapsed = gpt_result
@@ -260,10 +312,8 @@ def next_move():
     state['claude_total_time'] = round(state['claude_total_time'] + claude_elapsed, 2)
     
     # Validate choices
-    if gpt_choice not in VALID_CHOICES:
-        gpt_choice = random.choice(VALID_CHOICES)
-    if claude_choice not in VALID_CHOICES:
-        claude_choice = random.choice(VALID_CHOICES)
+    if gpt_choice not in VALID_CHOICES or claude_choice not in VALID_CHOICES:
+        return jsonify({'error': 'A model returned an invalid move. No result was recorded.'}), 502
     
     # Store choices
     state['gpt_choice'] = gpt_choice
@@ -292,14 +342,22 @@ def next_move():
         'claude_choice': claude_choice,
         'winner': round_winner,
         'gpt_time': state['gpt_last_time'],
-        'claude_time': state['claude_last_time']
+        'claude_time': state['claude_last_time'],
+        'gpt_reasoning': state['gpt_reasoning'],
+        'claude_reasoning': state['claude_reasoning'],
+        'played_at': datetime.now(timezone.utc).isoformat(),
     })
     
     # Check if all rounds complete
     if current_round >= state['total_rounds']:
         state['all_rounds_complete'] = True
+        state['completed_at'] = datetime.now(timezone.utc).isoformat()
     
     state['round_in_progress'] = False
+    try:
+        save_game(state)
+    except (OSError, ValueError):
+        return jsonify({'error': 'Could not save this round. The existing archive was preserved.'}), 500
     GAME_STATE = state
     
     return jsonify({
@@ -312,6 +370,7 @@ def next_move():
 
 
 @app.route('/api/next-game', methods=['POST'])
+@game_mutation
 def next_round():
     """Start the next round in the series."""
     global GAME_STATE
@@ -321,6 +380,9 @@ def next_round():
     
     if state['all_rounds_complete']:
         return jsonify({'error': 'All rounds complete'}), 400
+
+    if len(state['round_history']) != state['current_round']:
+        return jsonify({'error': 'Play this round before advancing.'}), 409
     
     # Move to next round
     state['current_round'] += 1

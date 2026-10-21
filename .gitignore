@@ -9,6 +9,8 @@ venv/
 # python cache
 __pycache__/
 *.pyc
+data/*.lock
+.playwright-mcp/
 
 # mac / editor
 .DS_Store
