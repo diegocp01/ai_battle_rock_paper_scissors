@@ -38,8 +38,8 @@ Then open http://localhost:5001.
 
 # How it works
 
-- `players/codex_sdk.py` starts a read-only, throwaway Codex thread for each move and asks for structured output. The GPT model list on the setup screen comes straight from Codex, so it stays current.
-- `players/claude_cli.py` runs `claude -p` with tools disabled and a JSON schema for the answer. Model choices are the Claude Code aliases (`fable`, `opus`, `sonnet`, `haiku`), which always point at the newest model in each family.
+- `players/codex_sdk.py` keeps one Codex app-server running (with your plugins, apps, MCP servers and memories turned off, since a move needs none of them) and starts a read-only, throwaway thread for each move with structured output. The GPT model list on the setup screen comes straight from Codex, so it stays current.
+- `players/claude_cli.py` runs `claude -p` with tools disabled and a JSON schema for the answer. Model choices are pinned model IDs (Fable 5.1, Opus 5.5, Sonnet 5.5, Haiku 5.5), so the version shown is the version that plays.
 - You pick a reasoning effort for each player on the setup screen.
 
 Optional environment variables:

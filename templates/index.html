@@ -40,10 +40,12 @@
                     </legend>
                     <div class="config-body">
                         <p id="gpt-note" class="config-note" hidden></p>
-                        <div id="gpt-tiles" class="tiles" aria-busy="true">
-                            <span class="tile-skeleton"></span>
-                            <span class="tile-skeleton"></span>
-                            <span class="tile-skeleton"></span>
+                        <div class="model-pick">
+                            <span class="effort-label">Model</span>
+                            <select id="gpt-model" class="select" aria-label="GPT model" disabled>
+                                <option>Loading models…</option>
+                            </select>
+                            <p id="gpt-model-tag" class="model-tag"></p>
                         </div>
                         <div class="effort">
                             <span class="effort-label">Reasoning effort</span>
@@ -59,10 +61,12 @@
                     </legend>
                     <div class="config-body">
                         <p id="claude-note" class="config-note" hidden></p>
-                        <div id="claude-tiles" class="tiles" aria-busy="true">
-                            <span class="tile-skeleton"></span>
-                            <span class="tile-skeleton"></span>
-                            <span class="tile-skeleton"></span>
+                        <div class="model-pick">
+                            <span class="effort-label">Model</span>
+                            <select id="claude-model" class="select" aria-label="Claude model" disabled>
+                                <option>Loading models…</option>
+                            </select>
+                            <p id="claude-model-tag" class="model-tag"></p>
                         </div>
                         <div class="effort">
                             <span class="effort-label">Reasoning effort</span>

@@ -1,7 +1,7 @@
 """Claude player: runs the Claude Code CLI (`claude -p`) for each move.
 
 Uses whatever account the CLI is already signed in with, so no API key is
-needed. Model aliases always point at the newest model in each family.
+needed.
 """
 
 import json
@@ -13,15 +13,16 @@ from .common import MOVE_SCHEMA, MOVE_TIMEOUT_SECONDS, SYSTEM_PROMPT, PlayerErro
 
 CLAUDE_BIN = os.environ.get("CLAUDE_BIN", "claude")
 
+# Pinned model IDs, so the version shown is the version that plays.
 MODELS = [
-    {"id": "fable", "name": "Claude Fable", "tag": "Most capable"},
-    {"id": "opus", "name": "Claude Opus", "tag": "Deep reasoning"},
-    {"id": "sonnet", "name": "Claude Sonnet", "tag": "Balanced"},
-    {"id": "haiku", "name": "Claude Haiku", "tag": "Fastest"},
+    {"id": "claude-fable-5-1", "name": "Claude Fable 5.1", "tag": "Most capable"},
+    {"id": "claude-opus-5-5", "name": "Claude Opus 5.5", "tag": "Deep reasoning"},
+    {"id": "claude-sonnet-5-5", "name": "Claude Sonnet 5.5", "tag": "Balanced"},
+    {"id": "claude-haiku-5-5", "name": "Claude Haiku 5.5", "tag": "Fastest"},
 ]
 
 EFFORTS = ["low", "medium", "high", "xhigh", "max"]
-DEFAULT_MODEL = "haiku"
+DEFAULT_MODEL = "claude-haiku-5-5"
 DEFAULT_EFFORT = "medium"
 
 
