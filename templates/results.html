@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <title>Results · RPS Arena</title>
+    <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/results.css">
+    <script src="/static/js/results.js" defer></script>
+</head>
+<body>
+    <nav class="nav" aria-label="Main navigation"><div class="nav-inner">
+        <a class="brand" href="/">RPS Arena</a>
+        <a class="results-link" href="/">Back to arena <span aria-hidden="true">↗</span></a>
+    </div></nav>
+    <main class="results-main">
+        <header class="results-hero">
+            <p class="eyebrow">THE RESULTS ARCHIVE <span class="archive-dot" aria-hidden="true"></span></p>
+            <h1>Every throw.<br><span>On the record.</span></h1>
+            <div class="results-intro"><p>GPT vs. Claude. The numbers tell the story.</p>
+                <a id="export-results" class="results-link export-link" href="/api/results" download="rps-results.json">Download data <span aria-hidden="true">↓</span></a>
+            </div>
+        </header>
+        <div class="results-toolbar">
+            <div id="effort-filters" class="effort-filters" role="group" aria-label="Filter games where both players use this reasoning effort">
+                <button type="button" data-effort="all" aria-pressed="true">All reasoning</button>
+                <button type="button" data-effort="low" aria-pressed="false">Low</button>
+                <button type="button" data-effort="medium" aria-pressed="false">Medium</button>
+                <button type="button" data-effort="high" aria-pressed="false">High</button>
+            </div>
+            <span id="archive-count" class="archive-count"></span>
+        </div>
+        <p id="results-status" class="results-status" role="status">Loading saved games…</p>
+        <button id="retry-results" class="btn btn-link" hidden>Try again</button>
+        <div id="results-content" hidden>
+            <section class="results-stats" aria-label="Results summary" id="results-stats"></section>
+            <section class="overview-card card" aria-labelledby="overview-title">
+                <div class="chart-heading"><div><p class="chart-eyebrow">THE BIG PICTURE</p><h2 id="overview-title">Who’s winning?</h2></div><span class="chart-badge">Round wins</span></div>
+                <div class="overview-grid">
+                    <div id="outcome-ring" class="outcome-ring"></div>
+                    <div class="matchup-chart">
+                        <div class="chart-legend"><span><i class="gpt-swatch"></i>GPT</span><span><i class="draw-swatch"></i>Draw</span><span><i class="claude-swatch"></i>Claude</span></div>
+                        <div id="matchup-bars"></div>
+                    </div>
+                </div>
+                <p class="chart-footnote">Each bar is one matchup. Wins and draws include every saved round in the selected reasoning level.</p>
+            </section>
+            <section class="pace-card card" aria-labelledby="pace-title">
+                <div class="chart-heading"><div><p class="chart-eyebrow">TIME TO THINK</p><h2 id="pace-title">Seconds per move.</h2></div><span class="chart-badge">Average response time</span></div>
+                <div id="pace-chart" class="pace-chart"></div>
+                <p class="chart-footnote">Wall-clock time, including local runtime overhead. Bars share the same scale.</p>
+            </section>
+            <section class="saved-games" aria-labelledby="games-title">
+                <div class="games-heading"><h2 id="games-title">The game log.</h2><span>Every pick. Every explanation.</span></div>
+                <div id="games-list" class="games-list"></div>
+            </section>
+            <p class="sample-note">A small experiment, not a model ranking. Matching reasoning labels do not guarantee equal compute.</p>
+        </div>
+    </main>
+    <footer class="site-footer"><p>RPS Arena · Results save automatically after each successful round.</p></footer>
+</body>
+</html>
